@@ -12,8 +12,8 @@ A [Vencord](https://vencord.dev) plugin that injects extra profile badges onto y
 ## Requirements
 
 - A desktop installation of Discord (Windows, macOS, or Linux). This plugin does **not** work on mobile or the browser version of Discord.
-- [Node.js](https://nodejs.org) (LTS)
-- [Git](https://git-scm.com)
+- [Node.js](https://nodejs.org) (LTS, Suggested to use Nodejs 22)
+- [Git](https://git-scm.com) 
 - [pnpm](https://pnpm.io) (`npm install -g pnpm`)
 
 ## Installation
