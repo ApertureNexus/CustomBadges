@@ -63,3 +63,9 @@ Toggle the plugin off in **Vencord → Plugins**, or remove the `src/userplugins
 
 - Changes are visible only in your own client. Other users viewing your profile through their own Discord client will see your real, unmodified badges.
 - Icon values should be the bare CDN hash (e.g. `bf01d1073931f921909045f3a39fd264`), not a full URL — the plugin builds image URLs internally.
+
+## Credits:
+
+@NexzaDev - Creator
+
+@ShadowDev7 - Testing 
