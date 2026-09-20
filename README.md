@@ -1,4 +1,4 @@
-# BadgeSpoofer
+# CustomBadger 
 
 A [Vencord](https://vencord.dev) plugin that injects extra profile badges onto your own Discord profile and displays them in a custom order. Local/client-side only — it does not change your real account and is not visible to other users.
 
