@@ -17,7 +17,7 @@ Lead Maintainer: [NexzaDev](https://github.com/NexzaDev), Tester is [ShadowDev7]
   `vencord-plugin/README.md` for step-by-step setup.
 - **`browser-extension-legacy/`** — the original standalone Chrome/Vivaldi
   extension version (no settings UI, edit `main.js` directly to configure).
-  Kept for reference; the Vencord plugin supersedes it.
+  Kept for reference; the Vencord plugin supersedes it. *We do NOT recommend you use it*
 
 ## How it works
 
