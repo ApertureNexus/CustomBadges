@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "CustomBadges for Vencord",
+  "version": "1.0.0",
+  "description": "Αυτόματα προσθέτει custom Discord badges στο δικό σου profile μέσω Vencord.",
+  "content_scripts": [
+    {
+      "matches": ["*://discord.com/*", "*://*.discord.com/*"],
+      "js": ["inject.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["main.js"],
+      "matches": ["*://discord.com/*", "*://*.discord.com/*"]
+    }
+  ]
+}
