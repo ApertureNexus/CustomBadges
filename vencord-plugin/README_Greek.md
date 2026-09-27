@@ -54,3 +54,5 @@ Discord default).
 δικό σου πελάτη (patch στο `UserProfileStore`). Δεν το βλέπουν άλλοι χρήστες
 ούτε αλλάζει κάτι στο πραγματικό λογαριασμό σου· είναι καθαρά client-side
 cosmetic, στο ίδιο πνεύμα με ό,τι έκανε ήδη το παλιό script/extension.
+
+Κείμενο γράφτηκε από [NexzaDev](https://github.com/NexzaDev)
