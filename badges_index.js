@@ -1,6 +1,6 @@
 // Index for all of the badges in Discord
-
-{ id: "orbs-apprentice", category: "general", name: "Orbs Apprentice", icon: "83d8a1eb09a8d64e59233eec5d4d5c2d" },
+// Created by ShadowDev7
+    { id: "orbs-apprentice", category: "general", name: "Orbs Apprentice", icon: "83d8a1eb09a8d64e59233eec5d4d5c2d" },
     { id: "completed-a-quest", category: "general", name: "Completed a Quest", icon: "7d9ae358c8c5e118768335dbe68b4fb8" },
     { id: "april-fools-lootbox", category: "general", name: "April Fools Lootbox", icon: "971cfe4aa5c0582000ea" },
     { id: "originally-known-as", category: "general", name: "Originally Known As", icon: "6de6d34650760ba5551a79732e98ed60" },
