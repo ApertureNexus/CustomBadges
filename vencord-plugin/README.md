@@ -48,3 +48,5 @@ After you configure it, build it and inject again:
 ## IMPORTANT
 
 This extension (like the original browser extension) is client-side, if you try to see it eg on your browser or mobile, it will **NOT** work. 
+
+Text written by [ShadowDev7](https://github.com/ShadowDev7)
