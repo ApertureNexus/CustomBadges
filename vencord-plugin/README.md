@@ -1,37 +1,50 @@
-# CustomBadger - Vencord userplugin
+# CustomBadger — Vencord userplugin
 
-This used to be a browser extension. However, due to some decisions, we decided to make it a vencord extension
+This is not anymore a browser extension· it is an actual Vencord plugin, so
+it is shown at **Vencord → Plugins** with your own settings,
+which each badge has an on/off switch.
 
-# Instructions 
+## Installation (Requires source build of Vencord — not the official installer)
 
-I assume you already have installed discord and logged once, **this is required**
+1. If you do not have the source, clone it:
+   ```
+   git clone https://github.com/Vendicated/Vencord
+   cd Vencord
+   pnpm install
+   ```
+2. Inside the repo, make this:
+   ```
+   src/userplugins/CustomBagder/
+   ```
+3. Add `index.tsx` inside that Folder.
+4. Build & inject:
+   ```
+   pnpm build
+   pnpm inject
+   ```
+   (Windows: `pnpm inject`, then select the Discord client when required.)
+5. Do full restart of Discord (not just reload — Ctrl+R not enough to apply. Close and reopen the app).
+6. Discord Settings → Vencord → Plugins → **CustomBadger** → enable it
+   → the settings icon allows you to customize the badges
 
-1. Install the following:
+## What each switch does
 
-On Debian/Ubutntu:
-```bash
-sudo apt update && sudo apt install -y nodejs npm
-sudo corepack enable pnpm
-```
+The 11 switches point exactly at the badges you had in your old 
+`customOrder` (Nitro Opal, HypeSquad Events, HypeSquad Brilliance, Bug
+Hunter Tier 2, Early Verified Bot Developer, Early Supporter, Server Boost
+2 Years, Originally Known As, Completed a Quest, Orbs Apprentice, Legend).
+The order of the badges in your profile is followed always with the order of the list
+`BADGE_ORDER` inside `index.tsx` — meaning whatever order they have, will be that. 
 
-On Fedora/SUSE/RHEL based:
-```bash
-sudo dnf install -y nodejs npm pnpm
-```
+The `badgeSize` switch/space controls the size of the badges (0 = is default).
 
-On Arch based:
-```bash
-sudo pacman -S nodejs npm pnpm
-```
+## Adding or Changing the list 
 
-On Windows: (PowerShell)
-```powershell
-winget install OpenJS.NodeJS Corecheck.pnpm Git.Git
-```
+Open the `index.tsx`, find the `BADGE_ORDER` array at the start, and
+add/remove an object object `{ key, id, name, icon }` — το `key` MUST be a hash (no links, a HASH, eg `6de6d34650760ba5551a79732e98ed60`). The settings tab will be updated automatically
+After you configure it, build it and inject again:
+`pnpm build && pnpm inject`.
 
-3. Clone the git repository and install:
-```bash
-git clone https://github.com/Vencord/Vencord
-cd Vencord
-pnpm install
-```
+## IMPORTANT
+
+This extension (like the original browser extension) is client-side, if you try to see it eg on your browser or mobile, it will **NOT** work. 
