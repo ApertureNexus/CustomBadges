@@ -6,7 +6,7 @@ cosmetic patch, visible only to you, nothing sent anywhere.
 
 Part of [NexusResearch](https://github.com/NexusResearch).
 
-Lead Maintainer: [NexzaDev](https://github.com/NexzaDev)
+Lead Maintainer: [NexzaDev](https://github.com/NexzaDev), Tester is [ShadowDev7](https://github.com/ShadowDev7)
 
 ## Contents
 
@@ -24,7 +24,7 @@ Lead Maintainer: [NexzaDev](https://github.com/NexzaDev)
 The plugin patches `UserProfileStore.getUserProfile` at runtime so your own
 client injects extra badge entries into your own profile view. It doesn't
 touch your account, doesn't affect what other users see, and doesn't talk
-to any server.
+to any server. It is client side only and works **ONLY** with Vencord
 
 ## License
 
