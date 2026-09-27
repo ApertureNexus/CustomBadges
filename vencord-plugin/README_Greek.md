@@ -1,4 +1,4 @@
-# CustomBadges — Vencord userplugin
+# CustomBadger — Vencord userplugin
 
 Αυτό δεν είναι πια browser extension· είναι πραγματικό Vencord plugin, οπότε
 εμφανίζεται στο **Vencord → Plugins** με δικό του settings tab (γρανάζι),
@@ -14,7 +14,7 @@
    ```
 2. Μέσα στο repo, φτιάξε τον φάκελο:
    ```
-   src/userplugins/customBadges/
+   src/userplugins/customBadger/
    ```
 3. Βάλε το `index.tsx` μέσα σε αυτόν τον φάκελο.
 4. Build & inject:
@@ -25,7 +25,7 @@
    (Windows: `pnpm inject`, μετά επίλεξε το Discord client όταν σου ζητηθεί.)
 5. Κάνε πλήρες restart το Discord (όχι απλό reload — Ctrl+R δεν αρκεί πάντα
    για νέο plugin· κλείσε το εντελώς από το tray).
-6. Discord Settings → Vencord → Plugins → **CustomBadges** → ενεργοποίησέ το
+6. Discord Settings → Vencord → Plugins → **CustomBadger** → ενεργοποίησέ το
    → πάτα το γρανάζι δίπλα του για να δεις τα switches ανά badge.
 
 ## Τι κάνει κάθε switch
