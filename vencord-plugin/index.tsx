@@ -14,7 +14,9 @@ interface BadgeDef {
 // Display order = array order. This is also the order the toggles
 // appear in the plugin's settings tab, so the two always match.
 const BADGE_ORDER: BadgeDef[] = [
-    // Adding the whole index was a fucking mess, man
+    // HEY YOU, yes YOU
+    // If you are reading this, just know. I tried to put the other badges and it sucked
+    // if you can add it, PLEASE do a Pull request! 
     
     // Devs/Bots
     { key: "showStaff", id: "staff", name: "Discord Staff", icon: "5e74e9b61934fc1f67c65515d1f7e60d" },
