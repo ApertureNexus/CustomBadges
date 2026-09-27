@@ -6,6 +6,8 @@ cosmetic patch, visible only to you, nothing sent anywhere.
 
 Part of [NexusResearch](https://github.com/NexusResearch).
 
+Lead Maintainer: [NexzaDev](https://github.com/NexzaDev)
+
 ## Contents
 
 - **`vencord-plugin/`** — the actual plugin. Drop into
