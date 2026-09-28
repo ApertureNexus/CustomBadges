@@ -46,7 +46,16 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl6", id: "guild_booster_lvl6", name: "Server Boost (12mo)", icon: "991c9f39ee33d7537d9f408c3e53141e" },
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
-];
+    { key: "showBoostLvl9", id: "guild_booster_lvl9", name: "Server Boost (24mo)", icon: "ec92202290b48d0879b7413d2dde3bab" },
+
+    // Gifting
+    { key: "patron",   id: "gifting_patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
+    { key: "champion", id: "gifting_champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
+    { key: "luminary", id: "gifting_luminary", name: "Luminary", icon: "3119f5504b2cd09576a323908c7c3517" },
+    { key: "icon",     id: "gifting_icon",     name: "Icon",     icon: "64f2413c9b9803661322aaad25826b62" },
+    { key: "hero",     id: "gifting_hero",     name: "Hero",     icon: "77d65b1f210014a11eb1582ee06ab684" },
+    { key: "legend",   id: "gifting_legend",   name: "Legend",   icon: "7fe346cfc5da1340087d8759a9e7a395" },
+]; 
 
 // If you actually own one of these badges for real (e.g. you really did
 // complete a quest), we keep Discord's own entry instead of overwriting
@@ -63,6 +72,34 @@ function iconKey(url?: string | null): string | null {
     return last.split(".")[0].split("?")[0].toLowerCase();
 }
 
+// ---- CSS for badge size -------------------------------------------------
+// Runs on start() AND every time the badgeSize setting changes.
+function applySizeCss() {
+    const size = Number(settings.store.badgeSize);
+    const existing = document.getElementById("vc-custombadges-size");
+    if (!size || size <= 0 || !isFinite(size)) {
+        existing?.remove();
+        return;
+    }
+    const style = (existing as HTMLStyleElement | null) ?? document.createElement("style");
+    style.id = "vc-custombadges-size";
+    if (!existing) document.head.appendChild(style);
+    style.textContent = `
+        img[src*="/badge-icons/"],
+        img[src*="discord.com/assets/"],
+        [class*="profileBadge"] img,
+        [class*="badgeList"] img {
+            width: ${size}px !important;
+            height: ${size}px !important;
+            min-width: ${size}px !important;
+            min-height: ${size}px !important;
+            max-width: ${size}px !important;
+            max-height: ${size}px !important;
+            object-fit: contain !important;
+        }
+    `;
+}
+
 // Build the settings object dynamically from BADGE_ORDER so the toggle
 // list in the UI can never drift out of sync with the badge list itself.
 const settingsDef: Record<string, any> = {};
@@ -77,13 +114,40 @@ settingsDef.badgeSize = {
     type: OptionType.NUMBER,
     description: "Badge Size in px (0 = auto)",
     default: 20,
+    onChange: () => applySizeCss(),
 };
 
 const settings = definePluginSettings(settingsDef);
 
 const UserProfileStore = findStoreLazy("UserProfileStore");
 
-let origGetUserProfile: any;
+let origGetUserProfile: any = null;
+
+// Cache: same Discord profile object + same toggles => SAME returned object.
+// Discord's React code compares store results by identity; returning a brand
+// new object on every call makes components re-render forever -> crash.
+const cache = new WeakMap<object, { sig: string; result: any }>();
+
+function toggleSignature(): string {
+    return BADGE_ORDER.map(b => (settings.store[b.key] ? "1" : "0")).join("");
+}
+
+function buildBadges(rawExisting: any[]): any[] {
+    // Keep only the real badges we explicitly marked as "keep"
+    const existing = rawExisting.filter(x => x && KEEP_REAL_IDS.has(x.id));
+
+    for (const b of BADGE_ORDER) {
+        if (!settings.store[b.key]) continue; // toggled off
+        const already = existing.some(x => x.id === b.id || iconKey(x.icon) === iconKey(b.icon));
+        if (already) continue;
+        existing.push({ id: b.id, description: b.name, icon: b.icon, link: "#" });
+    }
+
+    return existing
+        .map((badge, i) => ({ badge, i, rank: RANK_MAP[badge.id] ?? UNRANKED }))
+        .sort((a, b) => a.rank - b.rank || a.i - b.i)
+        .map(x => x.badge);
+}
 
 export default definePlugin({
     name: "CustomBadger",
@@ -95,63 +159,52 @@ export default definePlugin({
     settings,
 
     start() {
+        if (origGetUserProfile) return; // already patched, never wrap twice
         origGetUserProfile = UserProfileStore.getUserProfile;
-        const self = this;
 
-        UserProfileStore.getUserProfile = function (userId: string) {
-            const profile = origGetUserProfile.apply(this, arguments);
-            const currentUser = UserStore.getCurrentUser();
-            if (!profile || !currentUser || userId !== currentUser.id) return profile;
+        UserProfileStore.getUserProfile = function (this: any, ...args: any[]) {
+            const profile = origGetUserProfile.apply(this, args);
 
-            const rawExisting: any[] = Array.isArray(profile.badges) ? profile.badges : [];
+            // A plugin must NEVER be able to take Discord down: on any error
+            // fall back to Discord's untouched profile.
+            try {
+                const userId = args[0];
+                const currentUser = UserStore.getCurrentUser();
+                if (!profile || typeof profile !== "object" || !currentUser || userId !== currentUser.id) return profile;
 
-            // Preserve Discord's own entry for any badge id we've marked as "real".
-            const existing = rawExisting.filter(x => KEEP_REAL_IDS.has(x.id));
+                const sig = toggleSignature();
+                const cached = cache.get(profile);
+                if (cached && cached.sig === sig) return cached.result;
 
-            for (const b of BADGE_ORDER) {
-                if (!settings.store[b.key]) continue; // toggled off
-                const already = existing.some(x => x.id === b.id || iconKey(x.icon) === iconKey(b.icon));
-                if (already) continue;
-                existing.push({ id: b.id, description: b.name, icon: b.icon, link: "#" });
+                // Copy of the profile (same prototype, same props). We do NOT
+                // mutate Discord's own store object anymore.
+                const result = Object.create(
+                    Object.getPrototypeOf(profile),
+                    Object.getOwnPropertyDescriptors(profile)
+                );
+                Object.defineProperty(result, "badges", {
+                    value: buildBadges(Array.isArray(profile.badges) ? profile.badges : []),
+                    enumerable: true,
+                    configurable: true,
+                    writable: true,
+                });
+
+                cache.set(profile, { sig, result });
+                return result;
+            } catch (e) {
+                console.error("[CustomBadger] getUserProfile failed, using original profile", e);
+                return profile;
             }
-
-            profile.badges = existing
-                .map((badge, i) => ({ badge, i, rank: RANK_MAP[badge.id] ?? UNRANKED }))
-                .sort((a, b) => a.rank - b.rank || a.i - b.i)
-                .map(x => x.badge);
-
-            return profile;
         };
 
-        self.applySizeCss();
+        applySizeCss();
     },
 
     stop() {
-        if (origGetUserProfile) UserProfileStore.getUserProfile = origGetUserProfile;
+        if (origGetUserProfile) {
+            UserProfileStore.getUserProfile = origGetUserProfile;
+            origGetUserProfile = null;
+        }
         document.getElementById("vc-custombadges-size")?.remove();
     },
-    applySizeCss() {
-        const size = settings.store.badgeSize;
-        if (!size || size <= 0) return;
-        let style = document.getElementById("vc-custombadges-size") as HTMLStyleElement | null;
-        if (!style) {
-            style = document.createElement("style");
-            style.id = "vc-custombadges-size";
-            document.head.appendChild(style);
-        }
-        style.textContent = `
-            img[src*="/badge-icons/"],
-            img[src*="discord.com/assets/"],
-            [class*="profileBadge"] img,
-            [class*="badgeList"] img {
-            width: ${size}px !important;
-            height: ${size}px !important;
-            min-width: ${size}px !important;
-            min-height: ${size}px !important;
-            max-width: ${size}px !important;
-            max-height: ${size}px !important;
-            object-fit: contain !important;
-        }
-    `;
-}
 });
