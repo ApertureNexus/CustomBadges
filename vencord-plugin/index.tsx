@@ -13,11 +13,7 @@ interface BadgeDef {
 
 // Display order = array order. This is also the order the toggles
 // appear in the plugin's settings tab, so the two always match.
-const BADGE_ORDER: BadgeDef[] = [
-    // HEY YOU, yes YOU
-    // If you are reading this, just know. I tried to put the other badges and it sucked
-    // if you can add it, PLEASE do a Pull request! 
-    
+const BADGE_ORDER: BadgeDef[] = {
     // Devs/Bots
     { key: "showStaff", id: "staff", name: "Discord Staff", icon: "5e74e9b61934fc1f67c65515d1f7e60d" },
     { key: "showPartner", id: "partner", name: "Partnered Server Owner", icon: "3f9748e53446a137a052f3454e2de41e" },
@@ -47,7 +43,6 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
     { key: "showBoostLvl9", id: "guild_booster_lvl9", name: "Server Boost (24mo)", icon: "ec92202290b48d0879b7413d2dde3bab" },
-
     // Gifting
     { key: "patron",   id: "gifting_patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
     { key: "champion", id: "gifting_champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
