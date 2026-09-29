@@ -1,4 +1,5 @@
 import { definePluginSettings } from "@api/Settings";
+import { addProfileBadge, BadgePosition, removeProfileBadge, type ProfileBadge } from "@api/Badges";
 import definePlugin, { OptionType } from "@utils/types";
 import { findStoreLazy } from "@webpack";
 import { UserStore } from "@webpack/common";
@@ -14,9 +15,7 @@ interface BadgeDef {
 // Display order = array order. This is also the order the toggles
 // appear in the plugin's settings tab, so the two always match.
 const BADGE_ORDER: BadgeDef[] = [
-    // HEY YOU, yes YOU
-    // If you are reading this, just know. I tried to put the other badges and it sucked
-    // if you can add it, PLEASE do a Pull request! 
+  
     
     // Devs/Bots
     { key: "showStaff", id: "staff", name: "Discord Staff", icon: "5e74e9b61934fc1f67c65515d1f7e60d" },
@@ -30,6 +29,7 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBotCommands", id: "bot_commands", name: "Supports Commands", icon: "6f9e37f9029ff57aef81db857890005e" },
     { key: "showPremiumOG", id: "premium", name: "Subscriber since Dec 22, 2016", icon: "2ba85e8026a8614b640c2837bcdfe21b" },
     // Nitro 
+    { key: "showNitrobasic", id: "premium_tenure_basic", name: "Discord Nitro Basic", icon: "f61ddf640d11d9bdfaf9de265eb862edf28986b659e545f293b54adf229433af" },
     { key: "showNitro1mo",  id: "premium_tenure_1_month_v2",  name: "Nitro (1mo)",  icon: "4f33c4a9c64ce221936bd256c356f91f" },
     { key: "showNitro3mo",  id: "premium_tenure_3_month_v2",  name: "Nitro (3mo)",  icon: "4514fab914bdbfb4ad2fa23df76121a6" },
     { key: "showNitro6mo",  id: "premium_tenure_6_month_v2",  name: "Nitro (6mo)",  icon: "2895086c18d5531d499862e41d1155a6" },
@@ -46,12 +46,88 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl6", id: "guild_booster_lvl6", name: "Server Boost (12mo)", icon: "991c9f39ee33d7537d9f408c3e53141e" },
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
+    { key: "server-boost-2-years", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
+    // Gifting 
+    { key: "showPatron",   id: "patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
+    { key: "showChampion", id: "champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
+    { key: "showLuminary", id: "luminary", name: "Luminary", icon: "3119f5504b2cd09576a323908c7c3517" },
+    { key: "showIcon",     id: "icon",     name: "Icon",     icon: "64f2413c9b9803661322aaad25826b62" },
+    { key: "showHero",     id: "hero",     name: "Hero",     icon: "77d65b1f210014a11eb1582ee06ab684" },
+    { key: "showLegend",   id: "legend",   name: "Legend",   icon: "7fe346cfc5da1340087d8759a9e7a395" },
+    // Account Age
+    { key: "showSeed1y",          id: "seed-1y",          name: "Seed (1y)",          icon: "dda73966211a0c16533f8fcd9f1f27c27a628ef562927270e79df9b9c5e6cb12" },
+    { key: "showSprout2y",        id: "sprout-2y",        name: "Sprout (2y)",        icon: "74e1884f930b0d69986f92aeea77d3ff3d3d00c540f386b63e6ebb382d5e927d" },
+    { key: "showBud3y",           id: "bud-3y",           name: "Bud (3y)",           icon: "217dab12dcb72d4c95f2863e9dddd5c42003345a001684ea55a736172f32eea1" },
+    { key: "showSapling4y",       id: "sapling-4y",       name: "Sapling (4y)",       icon: "26b89419a4f562ab31a1a72eac04833aa1026af937f1d53c088ec258df3db84b" },
+    { key: "showBlossom5y",       id: "blossom-5y",       name: "Blossom (5y)",       icon: "1db184b6d10a61a37dc30efdc74d587560fac5291c8bb329977e93bb5a312602" },
+    { key: "showRedwood6y",       id: "redwood-6y",       name: "Redwood (6y)",       icon: "6b0f2ed5be272942eeabea3a0289027d164c7b1ce6a76166d1c928a57db762c5" },
+    { key: "showSequoia7y",       id: "sequoia-7y",       name: "Sequoia (7y)",       icon: "c095e3e73591843a22dc979d1fcfe3d6cf6841d1f51387d208d19f8bed01deb7" },
+    { key: "showBristlecone8y",   id: "bristlecone-8y",   name: "Bristlecone (8y)",   icon: "867feeff5acd481c80bae557c586718fb5390bbaaa1cbde55fae296a7884e799" },
+    { key: "showStromatolite9y",  id: "stromatolite-9y",  name: "Stromatolite (9y)",  icon: "a6f4c487be2aa012f41f1fba40e664f914ede9251f4b967d890ab5c065a29fb7" },
+    { key: "showPrimordial10y",   id: "primordial-10y",   name: "Primordial (10y)",   icon: "1d8caace0299b12bcc469c35ce927e838abd9c645a22fe7c556f4394e57fa79b" },
+    // Streaming
+    { key: "showStreamingNewcomer",   id: "streaming-newcomer",   name: "Streaming Newcomer",   icon: "c56b451e3bf04181182c2529e9bd3659e569ea80f582858090007f0752401b38" },
+    { key: "showStreamingFledgling",  id: "streaming-fledgling",  name: "Streaming Fledgling",  icon: "2e25ba794f6f371ea0f52eb2d3c8fb2b04094a56f388515e13a9bd6d7949a018" },
+    { key: "showStreamingBreakout",   id: "streaming-breakout",   name: "Streaming Breakout",   icon: "4e847b4dca20fbf1c56d3a47cac3c9204f02113c9d5a270ebebdf12909c75848" },
+    { key: "showStreamingStandout",   id: "streaming-standout",   name: "Streaming Standout",   icon: "27d0e6939f13dcf113243fc9eac642b15e9764ad891e06c5ed78d45a17678582" },
+    { key: "showStreamingTrendsetter",id: "streaming-trendsetter",name: "Streaming Trendsetter",icon: "af681483be2035f14b0f2bfe2e25a8944c97149172938888ca1008edbe037aad" },
+    { key: "showStreamingHeadliner",  id: "streaming-headliner",  name: "Streaming Headliner",  icon: "e69a0c86a476c9782ea1d3e7b5ba308eec3d9d6a3eae6ab8af3180f67d16b468" },
+    { key: "showStreamingStar",       id: "streaming-star",       name: "Streaming Star",       icon: "06b6206db966635cf626651bdb94eacce5a23ab05dc7f600f7d31aa482b2058c" },
+    { key: "showStreamingSensation",  id: "streaming-sensation",  name: "Streaming Sensation",  icon: "1a3b9120ecd64c342083c37980b225d29ebf4544da6ab546c9268f87904c9dfe" },
+    { key: "showStreamingVisionary",  id: "streaming-visionary",  name: "Streaming Visionary",  icon: "85f714b90ed3ceb1e00e1f2069bf3ebd564962fa940c92540061537a045e54ab" },
+    { key: "showStreamingPhenomenon", id: "streaming-phenomenon", name: "Streaming Phenomenon", icon: "61331d04b7a9542b38bfa59583360c0b9b93c6496a04f99c0ab37fa1d83ec58a" },
+    // Game Time 
+    { key: "showGameTimeCasual",       id: "game-time-casual",       name: "Game Time Casual",       icon: "b75fcc4dd1c65dfd4169a203e21023453fd6fe853c9b5c1fd839781fda98e80d" },
+    { key: "showGameTimeRecreational", id: "game-time-recreational", name: "Game Time Recreational", icon: "f0f32cb2a0003475e443b76a7a2baf454356953ecb84195c7a08c3ce2fd95b70" },
+    { key: "showGameTimeDedicated",    id: "game-time-dedicated",    name: "Game Time Dedicated",    icon: "e0c82f41bcad94a2a52713800fbef7687d0d2c6a6066b09d5e5876156d086e1a" },
+    { key: "showGameTimeCommitted",    id: "game-time-committed",    name: "Game Time Committed",    icon: "16f2aeb7465c99efce4d67d9333e3ddcf7435d6e60d2f5f93dc0c07bc7c5a69b" },
+    { key: "showGameTimeSerious",      id: "game-time-serious",      name: "Game Time Serious",      icon: "ba26e83fa68189b41837184e38706f41c288dd29ffba266035d1a5ad9adbae22" },
+    { key: "showGameTimeDevoted",      id: "game-time-devoted",      name: "Game Time Devoted",      icon: "851b194288f1913ece6c8d99976519e48210580d6f42d994f21e37801611ad54" },
+    { key: "showGameTimeSeasoned",     id: "game-time-seasoned",     name: "Game Time Seasoned",     icon: "8b10f5c0c30abbd521be5afc2e0dd4ec6da18bfbc689f06d93a51d06577cd84a" },
+    { key: "showGameTimeIronclad",     id: "game-time-ironclad",     name: "Game Time Ironclad",     icon: "d705628490898f2cc22d669cf8b415bc03fed1ddaf98a2a8cbd97442a509293c" },
+    { key: "showGameTimeUnshakeable",  id: "game-time-unshakeable",  name: "Game Time Unshakeable",  icon: "2bddcbc9f9959dab805eb7196c8112ce9dc68b09766c8193ab499b1870e44ac7" },
+    { key: "showGameTimeEternal",      id: "game-time-eternal",      name: "Game Time Eternal",      icon: "457ce4e657f0ced23197891cc3d75b7de29cafa065cdb8cbb81060ac0e63b07f" },
+    // Game Variety
+    { key: "showGameVarietySampler",     id: "game-variety-sampler",     name: "Game Variety Sampler",     icon: "ed18d5976c01a4ea19f5a13af08f0547582405cbe48b098b0822e352b8e0a822" },
+    { key: "showGameVarietyDabbler",     id: "game-variety-dabbler",     name: "Game Variety Dabbler",     icon: "e450d5279537db06ee47a104af520b884adaa7ffc3ef2627157526bf1c58e840" },
+    { key: "showGameVarietyEnthusiast",  id: "game-variety-enthusiast",  name: "Game Variety Enthusiast",  icon: "158a9d91b8ca9e96d4afeee38cd640fc51483a8196edb9af0c26e44727acafae" },
+    { key: "showGameVarietyRanger",      id: "game-variety-ranger",      name: "Game Variety Ranger",      icon: "9e491942070007f64011ae4fc478926b96433698c07621fc43bafdd5efe83912" },
+    { key: "showGameVarietyExplorer",    id: "game-variety-explorer",    name: "Game Variety Explorer",    icon: "e25fc55814262150e154ddb1a2b55fc5ed8ed5ba2ff1a22a33d4a41e651e370a" },
+    { key: "showGameVarietyAdventurer",  id: "game-variety-adventurer",  name: "Game Variety Adventurer",  icon: "542d5277e0001ea738d5eb57b247dcab9ce6e0c29493d5892203f6258fde55b9" },
+    { key: "showGameVarietyVoyager",     id: "game-variety-voyager",     name: "Game Variety Voyager",     icon: "082e693cb9ce98b81af618978d449409efc6522b061bc0eac6e88a949fd888c6" },
+    { key: "showGameVarietyMaverick",    id: "game-variety-maverick",    name: "Game Variety Maverick",    icon: "6fc242e9e8259c471a5e4599cd09af5476e622a572ff235883173913bf506103" },
+    { key: "showGameVarietyPolymath",    id: "game-variety-polymath",    name: "Game Variety Polymath",    icon: "be9a4d119b8e0d7fc1df7e5a12081332637cb9c978a90377cb9c930500b2fbe6" },
+    { key: "showGameVarietyUniversalist",id: "game-variety-universalist",name: "Game Variety Universalist",icon: "fcc34d343451505c642f3397cec2669a2de3a4a410fb968f794b3a1a0dcd1728" },
 ];
 
 // If you actually own one of these badges for real (e.g. you really did
 // complete a quest), we keep Discord's own entry instead of overwriting
 // it with our fake one.
 const KEEP_REAL_IDS = new Set<string>(["completed-a-quest"]);
+
+// These newer badges use Discord's /assets/content/<hash>.svg assets rather
+// than the standard /badge-icons/<hash>.png badge CDN path.
+const SVG_BADGE_IDS = new Set(
+    BADGE_ORDER
+        .filter(({ id }) => id === "premium_tenure_basic" || /^(seed-|sprout-|bud-|sapling-|blossom-|redwood-|sequoia-|bristlecone-|stromatolite-|primordial-|streaming-|game-time-|game-variety-)/.test(id))
+        .map(({ id }) => id)
+);
+
+const svgBadges: ProfileBadge = {
+    id: "custombadger-svg-badges",
+    position: BadgePosition.END,
+    getBadges: ({ userId }) => {
+        if (userId !== UserStore.getCurrentUser()?.id) return [];
+
+        return BADGE_ORDER
+            .filter(badge => SVG_BADGE_IDS.has(badge.id) && settings.store[badge.key])
+            .map(badge => ({
+                id: badge.id,
+                description: badge.name,
+                iconSrc: `https://cdn.discordapp.com/assets/content/${badge.icon}.svg`,
+            }));
+    },
+};
 
 const RANK_MAP: Record<string, number> = {};
 BADGE_ORDER.forEach((b, i) => { RANK_MAP[b.id] = i; });
@@ -128,6 +204,9 @@ function buildBadges(rawExisting: any[]): any[] {
     const existing = rawExisting.filter(x => x && KEEP_REAL_IDS.has(x.id));
 
     for (const b of BADGE_ORDER) {
+        // Vencord's Badge API renders these via iconSrc so their SVG URLs are
+        // used directly instead of Discord treating the hash as a PNG badge.
+        if (SVG_BADGE_IDS.has(b.id)) continue;
         if (!settings.store[b.key]) continue; // toggled off
         const already = existing.some(x => x.id === b.id || iconKey(x.icon) === iconKey(b.icon));
         if (already) continue;
@@ -151,6 +230,7 @@ export default definePlugin({
 
     start() {
         if (origGetUserProfile) return; // already patched, never wrap twice
+        addProfileBadge(svgBadges);
         origGetUserProfile = UserProfileStore.getUserProfile;
 
         UserProfileStore.getUserProfile = function (this: any, ...args: any[]) {
@@ -192,6 +272,7 @@ export default definePlugin({
     },
 
     stop() {
+        removeProfileBadge(svgBadges);
         if (origGetUserProfile) {
             UserProfileStore.getUserProfile = origGetUserProfile;
             origGetUserProfile = null;
