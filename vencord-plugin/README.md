@@ -29,13 +29,17 @@ which each badge has an on/off switch.
 
 ## What each switch does
 
-The 11 switches point exactly at the badges you had in your old 
-`customOrder` (Nitro Opal, HypeSquad Events, HypeSquad Brilliance, Bug
-Hunter Tier 2, Early Verified Bot Developer, Early Supporter, Server Boost
-2 Years, Originally Known As, Completed a Quest, Orbs Apprentice, Legend).
-The order of the badges in your profile is followed always with the order of the list
-`BADGE_ORDER` inside `index.tsx` — meaning whatever order they have, will be that. 
+There is one switch per badge. The order of the badges in your profile always
+follows the order of the `BADGE_ORDER` list inside `index.tsx`, so the order of
+the switches in the settings tab is also the order in the badge row.
 
+That order follows Discord's real display order: Discord Staff, Nitro tiers,
+Partnered Server Owner, Moderator Programs Alumni, HypeSquad Events, HypeSquad
+houses, Bug Hunter 1 and 2, Early Verified Bot Developer, Early Supporter,
+Server Boost, Originally Known As, Completed a Quest, Orbs Apprentice, Gifting.
+Tier badges always go from the lowest to the highest tier. Active Developer,
+Uses AutoMod, Supports Commands and the 2016 Subscriber badge are kept at the
+end because their real position is not known yet.
 The `badgeSize` switch/space controls the size of the badges (0 = is default).
 
 ## Adding or Changing the list 

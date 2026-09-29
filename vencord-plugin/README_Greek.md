@@ -30,14 +30,17 @@
 
 ## Τι κάνει κάθε switch
 
-Τα 11 switches αντιστοιχούν ακριβώς στα badges που είχες στο παλιό
-`customOrder` (Nitro Opal, HypeSquad Events, HypeSquad Brilliance, Bug
-Hunter Tier 2, Early Verified Bot Developer, Early Supporter, Server Boost
-2 Years, Originally Known As, Completed a Quest, Orbs Apprentice, Legend).
-Η σειρά εμφάνισης στο profile ακολουθεί πάντα τη σειρά της λίστας
-`BADGE_ORDER` μέσα στο `index.tsx` — δηλαδή ό,τι σειρά έχουν τα switches στο
-settings tab, αυτή είναι και η σειρά στο badge row.
+Υπάρχει ένα switch ανά badge. Η σειρά εμφάνισης στο profile ακολουθεί πάντα τη
+σειρά της λίστας `BADGE_ORDER` μέσα στο `index.tsx` — δηλαδή ό,τι σειρά έχουν
+τα switches στο settings tab, αυτή είναι και η σειρά στο badge row.
 
+Η σειρά ακολουθεί το πραγματικό display order του Discord: Discord Staff, Nitro
+tiers, Partnered Server Owner, Moderator Programs Alumni, HypeSquad Events,
+HypeSquad houses, Bug Hunter 1 και 2, Early Verified Bot Developer, Early
+Supporter, Server Boost, Originally Known As, Completed a Quest, Orbs
+Apprentice, Gifting. Τα tier badges πάνε πάντα από το μικρότερο στο μεγαλύτερο
+tier. Τα Active Developer, Uses AutoMod, Supports Commands και το Subscriber
+2016 μένουν στο τέλος, γιατί δεν ξέρουμε ακόμα την πραγματική τους θέση.
 Το `badgeSize` switch/πεδίο ελέγχει το μέγεθος των εικονιδίων (0 = αφήνει το
 Discord default).
 

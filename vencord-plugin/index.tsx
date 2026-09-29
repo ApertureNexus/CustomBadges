@@ -13,7 +13,11 @@ interface BadgeDef {
 
 // Display order = array order. This is also the order the toggles
 // appear in the plugin's settings tab, so the two always match.
-const BADGE_ORDER: BadgeDef[] = {
+const BADGE_ORDER: BadgeDef[] = [
+    // HEY YOU, yes YOU
+    // If you are reading this, just know. I tried to put the other badges and it sucked
+    // if you can add it, PLEASE do a Pull request! 
+    
     // Devs/Bots
     { key: "showStaff", id: "staff", name: "Discord Staff", icon: "5e74e9b61934fc1f67c65515d1f7e60d" },
     { key: "showPartner", id: "partner", name: "Partnered Server Owner", icon: "3f9748e53446a137a052f3454e2de41e" },
@@ -42,15 +46,7 @@ const BADGE_ORDER: BadgeDef[] = {
     { key: "showBoostLvl6", id: "guild_booster_lvl6", name: "Server Boost (12mo)", icon: "991c9f39ee33d7537d9f408c3e53141e" },
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
-    { key: "showBoostLvl9", id: "guild_booster_lvl9", name: "Server Boost (24mo)", icon: "ec92202290b48d0879b7413d2dde3bab" },
-    // Gifting
-    { key: "patron",   id: "gifting_patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
-    { key: "champion", id: "gifting_champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
-    { key: "luminary", id: "gifting_luminary", name: "Luminary", icon: "3119f5504b2cd09576a323908c7c3517" },
-    { key: "icon",     id: "gifting_icon",     name: "Icon",     icon: "64f2413c9b9803661322aaad25826b62" },
-    { key: "hero",     id: "gifting_hero",     name: "Hero",     icon: "77d65b1f210014a11eb1582ee06ab684" },
-    { key: "legend",   id: "gifting_legend",   name: "Legend",   icon: "7fe346cfc5da1340087d8759a9e7a395" },
-]; 
+];
 
 // If you actually own one of these badges for real (e.g. you really did
 // complete a quest), we keep Discord's own entry instead of overwriting
