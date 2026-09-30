@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <b>Show off the Discord badges you actually have — organized, accurate, and entirely under your control.</b>
+  <b>A Vencord plugin that injects extra profile badges onto your own Discord profile (client side only)</b>
 </p>
 
 <p align="center">
@@ -243,6 +243,7 @@ To be honest, I do not really know
 7. **Why does this exist?**
 
 As Cave Johnson said, *becuase why not?*
+
 ---
 
 ## 🤝 Contributing
