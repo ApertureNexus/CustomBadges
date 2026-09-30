@@ -152,23 +152,6 @@ const svgBadges: ProfileBadge = {
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const PREMIUM_ID = "premium";
 
-function parseDate(d: number, m: number, y: number): string | null {
-    if (![d, m, y].every(Number.isInteger)) return null;
-    if (y < 2000 || m < 1 || m > 12 || d < 1) return null;
-    const dt = new Date(y, m - 1, d);
-    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null; // e.g. 31/02
-    if (dt.getTime() > Date.now()) return null;
-    return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-}
-
-function formatPremiumDate(iso?: string): string | null {
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
-    if (!m) return null;
-    const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-    if (!parseDate(d, mo, y)) return null;
-    return `${MONTHS[mo - 1]} ${d}, ${y}`;
-}
-
 function badgeDescription(b: BadgeDef): string {
     if (b.id !== PREMIUM_ID) return b.name;
     const f = formatPremiumDate((settings.store as any).premiumSinceDate);
@@ -280,55 +263,6 @@ const dlgInput: CSSProperties = {
     border: "1px solid var(--background-modifier-accent, #4e5058)",
     background: "var(--input-background, #1e1f22)", color: "var(--text-normal, #dbdee1)",
 };
-
-// Popup asking for the subscription date. Rendered in a portal on document.body
-// so it is never clipped by the settings page.
-function DateDialog({ initial, onSave, onCancel }: { initial?: string; onSave: (iso: string) => void; onCancel: () => void; }) {
-    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(initial ?? "");
-    const [day, setDay] = React.useState(m ? String(Number(m[3])) : "");
-    const [month, setMonth] = React.useState(m ? String(Number(m[2])) : "");
-    const [year, setYear] = React.useState(m ? m[1] : "");
-
-    const iso = parseDate(Number(day), Number(month), Number(year));
-    const preview = iso ? formatPremiumDate(iso) : null;
-    const digits = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
-
-    return ReactDOM.createPortal(
-        <div
-            onClick={onCancel}
-            style={{ position: "fixed", inset: 0, zIndex: 100000, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,.7)" }}
-        >
-            <div
-                onClick={e => e.stopPropagation()}
-                style={{ width: 360, padding: 20, borderRadius: 8, background: "var(--modal-background, var(--background-primary, #313338))", color: "var(--text-normal, #dbdee1)" }}
-            >
-                <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4, color: "var(--header-primary, #fff)" }}>Subscriber since</div>
-                <div style={{ fontSize: 13, marginBottom: 16, color: "var(--text-muted, #949ba4)" }}>Enter the date as DD / MM / YYYY.</div>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center" }}>
-                    <input style={dlgInput} placeholder="DD" inputMode="numeric" autoFocus value={day} onChange={e => setDay(digits(e.target.value, 2))} />
-                    <span>/</span>
-                    <input style={dlgInput} placeholder="MM" inputMode="numeric" value={month} onChange={e => setMonth(digits(e.target.value, 2))} />
-                    <span>/</span>
-                    <input style={{ ...dlgInput, width: 84 }} placeholder="YYYY" inputMode="numeric" value={year} onChange={e => setYear(digits(e.target.value, 4))} />
-                </div>
-                <div style={{ height: 22, margin: "14px 0", textAlign: "center", fontSize: 14, color: preview ? "var(--text-normal, #dbdee1)" : "var(--text-muted, #949ba4)" }}>
-                    {preview ? `Subscriber since ${preview}` : (day || month || year) ? "Invalid date" : ""}
-                </div>
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-                    <button style={{ ...smallBtn, padding: "8px 16px", fontSize: 14 }} onClick={onCancel}>Cancel</button>
-                    <button
-                        disabled={!iso}
-                        onClick={() => iso && onSave(iso)}
-                        style={{ ...smallBtn, padding: "8px 16px", fontSize: 14, color: "#fff", background: "var(--brand-500, #5865f2)", opacity: iso ? 1 : 0.5, cursor: iso ? "pointer" : "not-allowed" }}
-                    >
-                        Save
-                    </button>
-                </div>
-            </div>
-        </div>,
-        document.body
-    );
-}
 
 function BadgeSettings() {
     // settings.use() re-renders this component whenever one of the toggles changes
@@ -471,9 +405,9 @@ function buildBadges(rawExisting: any[]): any[] {
 
 export default definePlugin({
     name: "CustomBadger",
-    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by NexusResearch",
+    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by (Apeture) Nexus Organization",
     authors: [
-        { name: "NexusResearch", id: 1411992082733863006n },
+        { name: "ApertureNexus", id: 1411992082733863006n },
         { name: "Contributor", id: 837022217002680350n },
     ],
     settings,
