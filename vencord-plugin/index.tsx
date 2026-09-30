@@ -152,7 +152,7 @@ function iconKey(url?: string | null): string | null {
     return last.split(".")[0].split("?")[0].toLowerCase();
 }
 
-// ---- CSS for badge size -------------------------------------------------
+// - CSS for badge size 
 // Runs on start() AND every time the badgeSize setting changes.
 function applySizeCss() {
     const size = Number(settings.store.badgeSize);
@@ -180,7 +180,7 @@ function applySizeCss() {
     `;
 }
 
-// ---- Settings UI ---------------------------------------------------------
+// - Settings UI 
 // Every badge still has its own boolean in `settings.store` (so your saved
 // toggles keep working), but those booleans are hidden from Vencord's default
 // list. Instead we render ONE custom component that groups the badges into
@@ -188,7 +188,7 @@ function applySizeCss() {
 
 const CATEGORIES: { title: string; match: (id: string) => boolean }[] = [
     { title: "Discord & Programs", match: id => ["staff", "partner", "active_developer", "verified_developer", "certified_moderator", "bug_hunter_level_1", "bug_hunter_level_2"].includes(id) || id.startsWith("hypesquad_") },
-    { title: "Developer & Bots", match: id => ["active_developer", "automod", "bot_commands"].includes(id) },
+    { title: "Bots", match: id => ["premium", "automod", "bot_commands"].includes(id) },
     { title: "Nitro", match: id => id === "premium" || id.startsWith("premium_tenure") },
     { title: "Server Boost", match: id => id.startsWith("guild_boost") },
     { title: "Gifting", match: id => ["patron", "champion", "luminary", "icon", "hero", "legend"].includes(id) },
