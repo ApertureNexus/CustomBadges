@@ -4,7 +4,7 @@ Custom profile badges for Discord, via [Vencord](https://vencord.dev/).
 Shows a curated set of badges on your own profile — a pure client-side
 cosmetic patch, visible only to you, nothing is sent anywhere.
 
-Part of [NexusResearch](https://github.com/NexusResearch).
+Part of [Nexus](https://github.com/ApertureNexus).
 
 Lead Maintainer: [NexzaDev](https://github.com/NexzaDev), Tester: [ShadowDev7](https://github.com/ShadowDev7)
 
