@@ -242,7 +242,7 @@ To be honest, I do not really know
 
 7. **Why does this exist?**
 
-As Cave Johnson said, becuase why not?
+As Cave Johnson said, *becuase why not?*
 ---
 
 ## 🤝 Contributing
