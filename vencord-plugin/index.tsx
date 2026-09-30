@@ -2,7 +2,8 @@ import { definePluginSettings } from "@api/Settings";
 import { addProfileBadge, BadgePosition, removeProfileBadge, type ProfileBadge } from "@api/Badges";
 import definePlugin, { OptionType } from "@utils/types";
 import { findStoreLazy } from "@webpack";
-import { UserStore } from "@webpack/common";
+import { React, UserStore } from "@webpack/common";
+import type { CSSProperties } from "react";
 
 interface BadgeDef {
     /** key inside `settings.store` that toggles this badge on/off */
@@ -15,20 +16,9 @@ interface BadgeDef {
 // Display order = array order. This is also the order the toggles
 // appear in the plugin's settings tab, so the two always match.
 const BADGE_ORDER: BadgeDef[] = [
-  
-    
-    // Devs/Bots
+    // Staff
     { key: "showStaff", id: "staff", name: "Discord Staff", icon: "5e74e9b61934fc1f67c65515d1f7e60d" },
-    { key: "showPartner", id: "partner", name: "Partnered Server Owner", icon: "3f9748e53446a137a052f3454e2de41e" },
-    { key: "showCertifiedMod", id: "certified_moderator", name: "Moderator Programs Alumni", icon: "fee1624003e2fee35cb398e125dc479b" },
-    { key: "showHypesquadBravery", id: "hypesquad_house_1", name: "HypeSquad Bravery", icon: "8a88d63823d8a71cd5e390baa45efa02" },
-    { key: "showHypesquadBalance", id: "hypesquad_house_3", name: "HypeSquad Balance", icon: "3aa41de486fa12454c3761e8e223442e" },
-    { key: "showBugHunterTier1", id: "bug_hunter_level_1", name: "Discord Bug Hunter", icon: "2717692c7dca7289b35297368a940dd0" },
-    { key: "showActiveDeveloper", id: "active_developer", name: "Active Developer", icon: "6bdc42827a38498929a4920da12695d9" },
-    { key: "showAutomod", id: "automod", name: "Uses AutoMod", icon: "f2459b691ac7453ed6039bbcfaccbfcd" },
-    { key: "showBotCommands", id: "bot_commands", name: "Supports Commands", icon: "6f9e37f9029ff57aef81db857890005e" },
-    { key: "showPremiumOG", id: "premium", name: "Subscriber since Dec 22, 2016", icon: "2ba85e8026a8614b640c2837bcdfe21b" },
-    // Nitro 
+    // Nitro
     { key: "showNitrobasic", id: "premium_tenure_basic", name: "Discord Nitro Basic", icon: "f61ddf640d11d9bdfaf9de265eb862edf28986b659e545f293b54adf229433af" },
     { key: "showNitro1mo",  id: "premium_tenure_1_month_v2",  name: "Nitro (1mo)",  icon: "4f33c4a9c64ce221936bd256c356f91f" },
     { key: "showNitro3mo",  id: "premium_tenure_3_month_v2",  name: "Nitro (3mo)",  icon: "4514fab914bdbfb4ad2fa23df76121a6" },
@@ -37,7 +27,13 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showNitro24mo", id: "premium_tenure_24_month_v2", name: "Nitro (24mo)", icon: "0d61871f72bb9a33a7ae568c1fb4f20a" },
     { key: "showNitro36mo", id: "premium_tenure_36_month_v2", name: "Nitro (36mo)", icon: "11e2d339068b55d3a506cff34d3780f3" },
     { key: "showNitro60mo", id: "premium_tenure_60_month_v2", name: "Nitro (60mo)", icon: "cd5e2cfd9d7f27a8cdcd3e8a8d5dc9f4" },
-    // Server Booster 
+    // Partner / Moderator / HypeSquad / Bug Hunter
+    { key: "showPartner", id: "partner", name: "Partnered Server Owner", icon: "3f9748e53446a137a052f3454e2de41e" },
+    { key: "showCertifiedMod", id: "certified_moderator", name: "Moderator Programs Alumni", icon: "fee1624003e2fee35cb398e125dc479b" },
+    { key: "showHypesquadBravery", id: "hypesquad_house_1", name: "HypeSquad Bravery", icon: "8a88d63823d8a71cd5e390baa45efa02" },
+    { key: "showHypesquadBalance", id: "hypesquad_house_3", name: "HypeSquad Balance", icon: "3aa41de486fa12454c3761e8e223442e" },
+    { key: "showBugHunterTier1", id: "bug_hunter_level_1", name: "Discord Bug Hunter", icon: "2717692c7dca7289b35297368a940dd0" },
+    // Server Boost (lowest -> highest)
     { key: "showBoostLvl1", id: "guild_booster_lvl1", name: "Server Boost (1mo)",  icon: "51040c70d4f20a921ad6674ff86fc95c" },
     { key: "showBoostLvl2", id: "guild_booster_lvl2", name: "Server Boost (2mo)",  icon: "0e4080d1d333bc7ad29ef6528b6f2fb7" },
     { key: "showBoostLvl3", id: "guild_booster_lvl3", name: "Server Boost (3mo)",  icon: "72bed924410c304dbe3d00a6e593ff59" },
@@ -47,13 +43,18 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
     { key: "server-boost-2-years", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
-    // Gifting 
+    // Gifting (lowest -> highest)
     { key: "showPatron",   id: "patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
     { key: "showChampion", id: "champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
     { key: "showLuminary", id: "luminary", name: "Luminary", icon: "3119f5504b2cd09576a323908c7c3517" },
     { key: "showIcon",     id: "icon",     name: "Icon",     icon: "64f2413c9b9803661322aaad25826b62" },
     { key: "showHero",     id: "hero",     name: "Hero",     icon: "77d65b1f210014a11eb1582ee06ab684" },
     { key: "showLegend",   id: "legend",   name: "Legend",   icon: "7fe346cfc5da1340087d8759a9e7a395" },
+    // Real position not known yet - kept at the end of the known ones
+    { key: "showActiveDeveloper", id: "active_developer", name: "Active Developer", icon: "6bdc42827a38498929a4920da12695d9" },
+    { key: "showAutomod", id: "automod", name: "Uses AutoMod", icon: "f2459b691ac7453ed6039bbcfaccbfcd" },
+    { key: "showBotCommands", id: "bot_commands", name: "Supports Commands", icon: "6f9e37f9029ff57aef81db857890005e" },
+    { key: "showPremiumOG", id: "premium", name: "Subscriber since Dec 22, 2016", icon: "2ba85e8026a8614b640c2837bcdfe21b" },
     // Account Age
     { key: "showSeed1y",          id: "seed-1y",          name: "Seed (1y)",          icon: "dda73966211a0c16533f8fcd9f1f27c27a628ef562927270e79df9b9c5e6cb12" },
     { key: "showSprout2y",        id: "sprout-2y",        name: "Sprout (2y)",        icon: "74e1884f930b0d69986f92aeea77d3ff3d3d00c540f386b63e6ebb382d5e927d" },
@@ -76,7 +77,7 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showStreamingSensation",  id: "streaming-sensation",  name: "Streaming Sensation",  icon: "1a3b9120ecd64c342083c37980b225d29ebf4544da6ab546c9268f87904c9dfe" },
     { key: "showStreamingVisionary",  id: "streaming-visionary",  name: "Streaming Visionary",  icon: "85f714b90ed3ceb1e00e1f2069bf3ebd564962fa940c92540061537a045e54ab" },
     { key: "showStreamingPhenomenon", id: "streaming-phenomenon", name: "Streaming Phenomenon", icon: "61331d04b7a9542b38bfa59583360c0b9b93c6496a04f99c0ab37fa1d83ec58a" },
-    // Game Time 
+    // Game Time
     { key: "showGameTimeCasual",       id: "game-time-casual",       name: "Game Time Casual",       icon: "b75fcc4dd1c65dfd4169a203e21023453fd6fe853c9b5c1fd839781fda98e80d" },
     { key: "showGameTimeRecreational", id: "game-time-recreational", name: "Game Time Recreational", icon: "f0f32cb2a0003475e443b76a7a2baf454356953ecb84195c7a08c3ce2fd95b70" },
     { key: "showGameTimeDedicated",    id: "game-time-dedicated",    name: "Game Time Dedicated",    icon: "e0c82f41bcad94a2a52713800fbef7687d0d2c6a6066b09d5e5876156d086e1a" },
@@ -167,22 +168,145 @@ function applySizeCss() {
     `;
 }
 
+// ---- Settings UI ---------------------------------------------------------
+// Every badge still has its own boolean in `settings.store` (so your saved
+// toggles keep working), but those booleans are hidden from Vencord's default
+// list. Instead we render ONE custom component that groups the badges into
+// categories, with the badge icon next to each name.
+
+const CATEGORIES: { title: string; match: (id: string) => boolean }[] = [
+    { title: "Discord & Programs", match: id => ["staff", "partner", "certified_moderator", "bug_hunter_level_1"].includes(id) || id.startsWith("hypesquad_") },
+    { title: "Developer & Bots", match: id => ["active_developer", "automod", "bot_commands"].includes(id) },
+    { title: "Nitro", match: id => id === "premium" || id.startsWith("premium_tenure") },
+    { title: "Server Boost", match: id => id.startsWith("guild_boost") },
+    { title: "Gifting", match: id => ["patron", "champion", "luminary", "icon", "hero", "legend"].includes(id) },
+    { title: "Account Age", match: id => /^(seed|sprout|bud|sapling|blossom|redwood|sequoia|bristlecone|stromatolite|primordial)-/.test(id) },
+    { title: "Streaming", match: id => id.startsWith("streaming-") },
+    { title: "Game Time", match: id => id.startsWith("game-time-") },
+    { title: "Game Variety", match: id => id.startsWith("game-variety-") },
+];
+
+// Badges are grouped, but inside each group they keep BADGE_ORDER order.
+const GROUPS = (() => {
+    const groups = CATEGORIES.map(c => ({ title: c.title, badges: [] as BadgeDef[] }));
+    const other = { title: "Other", badges: [] as BadgeDef[] };
+    for (const b of BADGE_ORDER) {
+        const idx = CATEGORIES.findIndex(c => c.match(b.id));
+        (idx === -1 ? other : groups[idx]).badges.push(b);
+    }
+    return [...groups, other].filter(g => g.badges.length > 0);
+})();
+
+function badgeIconUrl(b: BadgeDef): string {
+    return SVG_BADGE_IDS.has(b.id)
+        ? `https://cdn.discordapp.com/assets/content/${b.icon}.svg`
+        : `https://cdn.discordapp.com/badge-icons/${b.icon}.png`;
+}
+
+function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void; }) {
+    return (
+        <div
+            role="switch"
+            aria-checked={on}
+            onClick={() => onChange(!on)}
+            style={{
+                width: 40, height: 22, borderRadius: 11, flexShrink: 0, cursor: "pointer",
+                position: "relative", transition: "background .15s",
+                background: on ? "var(--brand-500, #5865f2)" : "var(--background-modifier-accent, #4e5058)",
+            }}
+        >
+            <div style={{
+                position: "absolute", top: 3, left: on ? 21 : 3, width: 16, height: 16,
+                borderRadius: "50%", background: "#fff", transition: "left .15s",
+            }} />
+        </div>
+    );
+}
+
+const smallBtn: CSSProperties = {
+    cursor: "pointer", border: "none", borderRadius: 4, padding: "2px 8px", fontSize: 12,
+    color: "var(--text-normal, #fff)", background: "var(--background-modifier-hover, #4e5058)",
+};
+
+function BadgeSettings() {
+    // settings.use() re-renders this component whenever one of the toggles changes
+    const store = settings.use(BADGE_ORDER.map(b => b.key)) as Record<string, any>;
+    const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>({});
+
+    const set = (key: string, value: boolean) => { (settings.store as any)[key] = value; };
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {GROUPS.map(group => {
+                const enabled = group.badges.filter(b => store[b.key]).length;
+                const isClosed = !!collapsed[group.title];
+                return (
+                    <div key={group.title} style={{
+                        border: "1px solid var(--background-modifier-accent, #4e5058)",
+                        borderRadius: 8, overflow: "hidden",
+                    }}>
+                        <div
+                            onClick={() => setCollapsed(c => ({ ...c, [group.title]: !c[group.title] }))}
+                            style={{
+                                display: "flex", alignItems: "center", gap: 8, padding: "10px 12px", cursor: "pointer",
+                                background: "var(--background-secondary, #2b2d31)",
+                            }}
+                        >
+                            <span style={{ width: 12, color: "var(--text-muted, #949ba4)" }}>{isClosed ? "▸" : "▾"}</span>
+                            <span style={{ fontWeight: 700, fontSize: 15, flex: 1, color: "var(--header-primary, #fff)" }}>
+                                {group.title}
+                                <span style={{ fontWeight: 400, fontSize: 12, marginLeft: 8, color: "var(--text-muted, #949ba4)" }}>
+                                    {enabled}/{group.badges.length}
+                                </span>
+                            </span>
+                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => set(b.key, true)); }}>All on</button>
+                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => set(b.key, false)); }}>All off</button>
+                        </div>
+
+                        {!isClosed && group.badges.map(b => (
+                            <div key={b.key} style={{
+                                display: "flex", alignItems: "center", gap: 12, padding: "8px 12px",
+                                borderTop: "1px solid var(--background-modifier-accent, #4e5058)",
+                            }}>
+                                {/* background-image instead of <img> on purpose: the badgeSize CSS
+                                    targets every img from /badge-icons/ and would resize these too */}
+                                <div style={{
+                                    width: 28, height: 28, flexShrink: 0,
+                                    backgroundImage: `url(${badgeIconUrl(b)})`,
+                                    backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center",
+                                }} />
+                                <span style={{ flex: 1, color: "var(--text-normal, #dbdee1)" }}>{b.name}</span>
+                                <Toggle on={!!store[b.key]} onChange={v => set(b.key, v)} />
+                            </div>
+                        ))}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
 // Build the settings object dynamically from BADGE_ORDER so the toggle
 // list in the UI can never drift out of sync with the badge list itself.
 const settingsDef: Record<string, any> = {};
-for (const b of BADGE_ORDER) {
-    settingsDef[b.key] = {
-        type: OptionType.BOOLEAN,
-        description: b.name,
-        default: true,
-    };
-}
 settingsDef.badgeSize = {
     type: OptionType.NUMBER,
     description: "Badge Size in px (0 = auto)",
     default: 20,
     onChange: () => applySizeCss(),
 };
+settingsDef.badgeList = {
+    type: OptionType.COMPONENT,
+    component: BadgeSettings,
+};
+for (const b of BADGE_ORDER) {
+    settingsDef[b.key] = {
+        type: OptionType.BOOLEAN,
+        description: b.name,
+        default: true,
+        hidden: true, // shown by the BadgeSettings component instead
+    };
+}
 
 const settings = definePluginSettings(settingsDef);
 
