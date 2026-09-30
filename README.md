@@ -105,8 +105,7 @@ the system tray) and reopen it.
 the ⚙️ gear icon to open the badge settings.
 
 📖 Full, step-by-step guide (with troubleshooting):
-[`vencord-plugin/README.md`](vencord-plugin/README.md) (English) ·
-`vencord-plugin/README_Greek.md` (Ελληνικά)
+[`vencord-plugin/README.md`](vencord-plugin/README.md) (English) 
 
 ---
 
