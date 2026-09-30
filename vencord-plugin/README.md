@@ -1,6 +1,6 @@
-# CustomBadger — Vencord userplugin
+# CustomBadges — Vencord userplugin
 
-This is no longer a browser extension: it is a real Vencord plugin, so it shows
+This is no longer a browser extension (well it used to): it is a real Vencord plugin, so it shows
 up under **Vencord → Plugins** with its own settings tab.
 
 ## Installation (requires a source build of Vencord — not the official installer)
@@ -13,7 +13,7 @@ up under **Vencord → Plugins** with its own settings tab.
    ```
 2. Inside the repo, create the folder:
    ```
-   src/userplugins/customBadger/
+   src/userplugins/CustomBadges/
    ```
 3. Put `index.tsx` inside that folder.
 4. Build and inject:
@@ -23,7 +23,7 @@ up under **Vencord → Plugins** with its own settings tab.
    ```
    (Windows: run `pnpm inject`, then pick your Discord client when asked.)
 5. Fully restart Discord (Ctrl+R is not enough — close it completely, also from the tray, and reopen).
-6. Discord Settings → Vencord → Plugins → **CustomBadger** → enable it,
+6. Discord Settings → Vencord → Plugins → **CustomBadges** → enable it,
    then click the gear icon to open the badge settings.
 
 ## The settings tab
