@@ -1,37 +1,30 @@
-# CustomBadger
+# CustomBadges
 
 Custom profile badges for Discord, via [Vencord](https://vencord.dev/).
-Shows a curated set of badges on your own profile — a pure client-side
-cosmetic patch, visible only to you, nothing is sent anywhere.
+Shows a curated set of badges on your own profile — pure client-side
+cosmetic patch, visible only to you, nothing sent anywhere.
 
 Part of [NexusResearch](https://github.com/NexusResearch).
 
-Lead Maintainer: [NexzaDev](https://github.com/NexzaDev), Tester: [ShadowDev7](https://github.com/ShadowDev7)
+Lead Maintainer: [NexzaDev](https://github.com/NexzaDev), Tester is [ShadowDev7](https://github.com/ShadowDev7)
 
 ## Contents
 
-- **`vencord-plugin/`** — the actual plugin. Drop `index.tsx` into
-  `src/userplugins/customBadger/` in a Vencord source checkout, then
-  `pnpm build && pnpm inject`. The settings tab groups the badges into
-  categories (Nitro, Server Boost, Gifting, Account Age, Streaming, Game Time,
-  Game Variety, ...), shows the badge icon next to every name, and has an
-  on/off switch per badge plus a badge-size option. Step-by-step setup is in
-  `vencord-plugin/README.md` (English) and `vencord-plugin/README_Greek.md` (Greek).
-- **`badges_index.js`** — reference list of Discord badges (name, category,
-  icon URL). Not used by the plugin at runtime; it is the source to copy
-  icon hashes from when adding badges.
+- **`vencord-plugin/`** — the actual plugin. Drop into
+  `src/userplugins/customBadges/` in a Vencord source checkout, then
+  `pnpm build && pnpm inject`. Has a full settings tab: one on/off switch
+  per badge, in display order, plus a badge-size option. See
+  `vencord-plugin/README.md` for step-by-step setup.
 - **`browser-extension-legacy/`** — the original standalone Chrome/Vivaldi
-  extension (no settings UI, edit `main.js` directly). Kept for reference only;
-  the Vencord plugin supersedes it. *We do NOT recommend using it.*
+  extension version (no settings UI, edit `main.js` directly to configure).
+  Kept for reference; the Vencord plugin supersedes it. *We do NOT recommend you use it*
 
 ## How it works
 
 The plugin patches `UserProfileStore.getUserProfile` at runtime so your own
-client injects extra badge entries into your own profile view. Newer SVG-based
-badges (Nitro Basic, Account Age, Streaming, Game Time, Game Variety) are added
-through Vencord's Badge API instead. It doesn't touch your account, doesn't
-affect what other users see, and doesn't talk to any server. It is client-side
-only and works **ONLY** with Vencord.
+client injects extra badge entries into your own profile view. It doesn't
+touch your account, doesn't affect what other users see, and doesn't talk
+to any server. It is client side only and works **ONLY** with Vencord
 
 ## License
 

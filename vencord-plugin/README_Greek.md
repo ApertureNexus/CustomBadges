@@ -1,7 +1,8 @@
 # CustomBadger — Vencord userplugin
 
 Αυτό δεν είναι πια browser extension· είναι πραγματικό Vencord plugin, οπότε
-εμφανίζεται στο **Vencord → Plugins** με δικό του settings tab (γρανάζι).
+εμφανίζεται στο **Vencord → Plugins** με δικό του settings tab (γρανάζι),
+όπου κάθε badge έχει το δικό του switch on/off.
 
 ## Εγκατάσταση (χρειάζεται source build του Vencord — όχι το installer)
 
@@ -22,75 +23,36 @@
    pnpm inject
    ```
    (Windows: `pnpm inject`, μετά επίλεξε το Discord client όταν σου ζητηθεί.)
-5. Κάνε πλήρες restart το Discord (όχι απλό reload — το Ctrl+R δεν αρκεί·
-   κλείσε το εντελώς, και από το tray, και άνοιξέ το ξανά).
+5. Κάνε πλήρες restart το Discord (όχι απλό reload — Ctrl+R δεν αρκεί πάντα
+   για νέο plugin· κλείσε το εντελώς από το tray).
 6. Discord Settings → Vencord → Plugins → **CustomBadger** → ενεργοποίησέ το
-   → πάτα το γρανάζι δίπλα του για να δεις τα settings.
+   → πάτα το γρανάζι δίπλα του για να δεις τα switches ανά badge.
 
-## Το settings tab
+## Τι κάνει κάθε switch
 
-- **Badge Size** — αριθμός, το μέγεθος των εικονιδίων σε px. `0` = δεν αλλάζει
-  το μέγεθος του Discord. Προσοχή: ο κανόνας μεγέθους ισχύει για τα εικονίδια
-  badge παντού στο Discord, όχι μόνο στο δικό σου προφίλ.
-- **Λίστα badges** — τα badges χωρίζονται σε κατηγορίες: Discord & Programs,
-  Developer & Bots, Nitro, Server Boost, Gifting, Account Age, Streaming,
-  Game Time, Game Variety.
-  - Κάθε badge έχει δίπλα στο όνομά του το εικονίδιό του και δικό του switch on/off.
-  - Με κλικ στον τίτλο μιας κατηγορίας τη διπλώνεις/ανοίγεις· ο μετρητής
-    (π.χ. `3/10`) δείχνει πόσα badges της κατηγορίας είναι ενεργά.
-  - Τα κουμπιά **All on / All off** ενεργοποιούν ή απενεργοποιούν όλα τα badges της κατηγορίας.
-- Οι αλλαγές φαίνονται την επόμενη φορά που ζωγραφίζεται το προφίλ σου — αν δεν
-  τις δεις αμέσως, κλείσε και ξανάνοιξε το προφίλ.
+Τα 11 switches αντιστοιχούν ακριβώς στα badges που είχες στο παλιό
+`customOrder` (Nitro Opal, HypeSquad Events, HypeSquad Brilliance, Bug
+Hunter Tier 2, Early Verified Bot Developer, Early Supporter, Server Boost
+2 Years, Originally Known As, Completed a Quest, Orbs Apprentice, Legend).
+Η σειρά εμφάνισης στο profile ακολουθεί πάντα τη σειρά της λίστας
+`BADGE_ORDER` μέσα στο `index.tsx` — δηλαδή ό,τι σειρά έχουν τα switches στο
+settings tab, αυτή είναι και η σειρά στο badge row.
 
-## Σειρά των badges στο προφίλ
+Το `badgeSize` switch/πεδίο ελέγχει το μέγεθος των εικονιδίων (0 = αφήνει το
+Discord default).
 
-Τα κανονικά badges ακολουθούν τη σειρά της λίστας `BADGE_ORDER` στο `index.tsx`,
-που ακολουθεί το πραγματικό display order του Discord όσο το ξέρουμε μέχρι
-τώρα: Discord Staff, Nitro tiers, Partnered Server Owner, Moderator Programs
-Alumni, HypeSquad houses, Bug Hunter, Server Boost, Gifting. Τα tier badges
-πάνε πάντα από το μικρότερο στο μεγαλύτερο tier. Τα Active Developer, Uses
-AutoMod, Supports Commands και το Subscriber 2016 έρχονται μετά από αυτά,
-γιατί δεν ξέρουμε ακόμα την πραγματική τους θέση.
+## Αν θες να προσθέσεις/αφαιρέσεις badges από τη λίστα
 
-**Εξαίρεση:** τα SVG badges (Discord Nitro Basic, Account Age, Streaming, Game
-Time, Game Variety) μπαίνουν μέσω του Badge API του Vencord και πάντα μπαίνουν
-στο **τέλος** της σειράς, με τη σειρά του `BADGE_ORDER` μεταξύ τους.
-
-Οι κατηγορίες στο settings tab είναι μόνο οργάνωση του μενού — δεν αλλάζουν τη
-σειρά στο προφίλ.
-
-## Αν θες να προσθέσεις/αφαιρέσεις badges
-
-Άνοιξε το `index.tsx`, βρες το `BADGE_ORDER` στην αρχή και πρόσθεσε/αφαίρεσε
-ένα object `{ key, id, name, icon }`:
-
-- `key` — μοναδικό· είναι το όνομα με το οποίο σώζεται το on/off. Αν αλλάξεις
-  το key ενός υπάρχοντος badge, το switch του γυρνάει στο default.
-- `id` — μοναδικό id. Καθορίζει και σε ποια κατηγορία μπαίνει το badge στα
-  settings (δες το `CATEGORIES` ακριβώς κάτω από το `BADGE_ORDER`)· ό,τι δεν
-  ταιριάζει πουθενά πάει στο "Other".
-- `name` — το κείμενο στα settings και στο tooltip του badge.
-- `icon` — **μόνο το hash**, ποτέ link (π.χ. `6de6d34650760ba5551a79732e98ed60`).
-  Τα hashes τα παίρνεις από το `badges_index.js`. Τα badges με εικονίδιο στο
-  `cdn.discordapp.com/assets/content/<hash>.svg` πρέπει να ταιριάζουν και στο
-  pattern του `SVG_BADGE_IDS`.
-
-Το settings tab ενημερώνεται αυτόματα. Μετά ξαναχτίσε με `pnpm build && pnpm inject`.
-
-## Γνωστοί περιορισμοί
-
-- Δεν υπάρχουν (ακόμα) στο plugin: Orbs Apprentice, Completed a Quest,
-  Originally Known As, HypeSquad Events, HypeSquad Brilliance, Early Verified
-  Bot Developer, Early Supporter, Bug Hunter Tier 2, Discord Nitro, April Fools
-  Lootbox, App Premium και Nitro Opal (72mo+). Υπάρχουν στο `badges_index.js`.
-- Αν ένα εικονίδιο βγαίνει άδειο, το hash του στο `BADGE_ORDER` είναι λάθος.
+Άνοιξε το `index.tsx`, βρες το `BADGE_ORDER` array στην αρχή, και
+πρόσθεσε/αφαίρεσε ένα object `{ key, id, name, icon }` — το `key` πρέπει να
+είναι μοναδικό, το settings tab ενημερώνεται αυτόματα. Ξαναχτίσε με
+`pnpm build && pnpm inject`.
 
 ## Σημαντικό
 
 Αυτό αλλάζει μόνο το πώς βλέπεις **εσύ** το δικό σου προφίλ, τοπικά μέσα στο
 δικό σου πελάτη (patch στο `UserProfileStore`). Δεν το βλέπουν άλλοι χρήστες
 ούτε αλλάζει κάτι στο πραγματικό λογαριασμό σου· είναι καθαρά client-side
-cosmetic. Αν δεις το προφίλ σου από browser ή κινητό (χωρίς το plugin), τα
-badges **δεν** θα υπάρχουν.
+cosmetic, στο ίδιο πνεύμα με ό,τι έκανε ήδη το παλιό script/extension.
 
 Κείμενο γράφτηκε από [NexzaDev](https://github.com/NexzaDev)
