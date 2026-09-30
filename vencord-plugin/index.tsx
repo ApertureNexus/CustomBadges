@@ -363,9 +363,9 @@ function buildBadges(rawExisting: any[]): any[] {
 
 export default definePlugin({
     name: "CustomBadger",
-    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by NexusResearch",
+    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by (Aperture) Nexus",
                             authors: [
-                                { name: "NexusResearch", id: 1411992082733863006n },
+                                { name: "ApertureNexus", id: 1411992082733863006n },
                                 { name: "Contributor", id: 837022217002680350n },
                             ],
                             settings,
