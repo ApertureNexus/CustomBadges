@@ -240,6 +240,9 @@ aren't wired up yet even though they exist in `badges_index.js`.
 
 To be honest, I do not really know
 
+7. **Why does this exist?**
+
+As Cave Johnson said, becuase why not?
 ---
 
 ## 🤝 Contributing
