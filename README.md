@@ -1,4 +1,4 @@
-# CustomBadger
+# CustomBadges
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Vencord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Platform: Vencord" />
@@ -23,9 +23,9 @@
 
 ---
 
-## What is CustomBadger?
+## What is CustomBadges?
 
-**CustomBadger** is a [Vencord](https://vencord.dev/) userplugin that renders a curated
+**CustomBadges** is a [Vencord](https://vencord.dev/) userplugin that renders a curated
 set of Discord profile badges on **your own profile view** — Nitro tenure,
 HypeSquad, Server Boost history, account-age badges, streaming tiers, and more —
 with a clean, categorized settings tab to toggle each one individually.
@@ -35,7 +35,7 @@ account data is modified, and no other user will ever see badges added by
 this plugin. It only changes what *you* see when *you* look at *your own*
 profile, in *your own* client.
 
-> **Heads up:** because it's client-side, badges added by CustomBadger will
+> **Heads up:** because it's client-side, badges added by CustomBadges will
 > **not** appear if you view your profile from a browser, on mobile, or from
 > an account without the plugin installed — and other people will never see
 > them either. See [FAQ](#-faq) for details.
@@ -67,7 +67,7 @@ profile, in *your own* client.
 
 ## 📦 Installation
 
-CustomBadger is a **userplugin**, which means it requires a **source build**
+CustomBadges is a **userplugin**, which means it requires a **source build**
 of Vencord — it will not work with the official one-click installer.
 
 ### 1. Get the Vencord source
@@ -81,7 +81,7 @@ pnpm install
 ### 2. Add the plugin
 
 ```bash
-mkdir -p src/userplugins/customBadger
+mkdir -p src/userplugins/CustomBadges
 ```
 
 Copy [`vencord-plugin/index.tsx`](vencord-plugin/index.tsx) from this repo into
@@ -160,16 +160,11 @@ Badges are grouped into 13 categories in the settings tab, in this order:
 ## 📁 Project Structure
 
 ```
-CustomBadger/
+CustomBadges/
 ├── vencord-plugin/           # the actual plugin — this is what you install
 │   ├── index.tsx             # plugin source: badge list, order, categories, UI
 │   └── README.md             # detailed setup + customization guide
-├── badges_index.js           # reference list of every known badge (name, icon hash)
-│                              # — not used at runtime, just a lookup table for
-│                              #   copying icon hashes when adding new badges
-├── browser-extension-legacy/ # the original pre-Vencord Chrome/Vivaldi extension
-│                              # kept for reference only — do NOT use, superseded
-│                              # entirely by the Vencord plugin
+├── badges_index.js           # reference list of every known badge (name, icon hash) — not used at runtime, just a lookup table for copying icon hashes when adding new badges
 ├── LICENSE
 └── README.md                  # you are here
 ```
@@ -178,7 +173,7 @@ CustomBadger/
 
 ## 🚀 Publishing to Vencord officially
 
-CustomBadger currently ships as a **userplugin** (something you drop into
+CustomBadges currently ships as a **userplugin** (something you drop into
 `src/userplugins/` yourself). That's the quickest way to use it, but it means
 it's *not* one of Vencord's built-in plugins yet. Here's, briefly, what
 getting it there for real looks like:
@@ -188,7 +183,7 @@ getting it there for real looks like:
    an `index.ts(x)` plus a short plugin description, following the coding
    conventions documented in Vencord's own contributing docs.
 2. **Fork [Vendicated/Vencord](https://github.com/Vendicated/Vencord)** and
-   add the plugin folder under `src/plugins/customBadger/`.
+   add the plugin folder under `src/plugins/customBadges/`.
 3. **Follow the review checklist**: no unnecessary patches, no telemetry, a
    clear `description` and `authors` field in the `definePlugin()` call, and
    settings defined through `definePluginSettings` (already done here).
