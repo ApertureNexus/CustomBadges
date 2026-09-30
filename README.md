@@ -123,7 +123,6 @@ Once enabled, the plugin's settings panel gives you:
 | **Category groups** | Click a category title to collapse/expand it. A `x / y` counter shows how many badges in that group are currently enabled. |
 | **All on / All off** | Per-category shortcut to toggle every badge inside it at once. |
 | **Per-badge toggle** | Every badge has its own switch, shown next to its real icon and name. |
-| **Subscriber since** | Enable it, then enter your Nitro start date as `DD/MM/YYYY`. The badge renders it as a full date. Use **Edit date** to change it later. |
 
 Changes apply the next time your profile view re-renders — close and reopen
 your profile popout if you don't see it update instantly.
