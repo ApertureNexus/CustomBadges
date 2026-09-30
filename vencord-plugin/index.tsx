@@ -3,7 +3,7 @@ import { addProfileBadge, BadgePosition, removeProfileBadge, type ProfileBadge }
 import definePlugin, { OptionType } from "@utils/types";
 import { findStoreLazy } from "@webpack";
 import { React, ReactDOM, UserStore } from "@webpack/common";
-import type { CSSProperties } from "react";
+import type { CSSProperties, KeyboardEvent } from "react";
 
 interface BadgeDef {
     /** key inside `settings.store` that toggles this badge on/off */
@@ -152,6 +152,23 @@ const svgBadges: ProfileBadge = {
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const PREMIUM_ID = "premium";
 
+function parseDate(d: number, m: number, y: number): string | null {
+    if (![d, m, y].every(Number.isInteger)) return null;
+    if (y < 2000 || m < 1 || m > 12 || d < 1) return null;
+    const dt = new Date(y, m - 1, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return null; // e.g. 31/02
+    if (dt.getTime() > Date.now()) return null;
+    return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+function formatPremiumDate(iso?: string): string | null {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso ?? "");
+    if (!m) return null;
+    const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    if (!parseDate(d, mo, y)) return null;
+    return `${MONTHS[mo - 1]} ${d}, ${y}`;
+}
+
 function badgeDescription(b: BadgeDef): string {
     if (b.id !== PREMIUM_ID) return b.name;
     const f = formatPremiumDate((settings.store as any).premiumSinceDate);
@@ -264,10 +281,66 @@ const dlgInput: CSSProperties = {
     background: "var(--input-background, #1e1f22)", color: "var(--text-normal, #dbdee1)",
 };
 
+// Inline editor for the subscription date.
+// It is rendered INSIDE the settings tree on purpose. The old version used a
+// portal on document.body, which sits outside Discord's settings focus lock:
+// the lock pulled focus away from the inputs, so typing did nothing.
+function DateEditor({ initial, onSave, onCancel }: { initial?: string; onSave: (iso: string) => void; onCancel: () => void; }) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(initial ?? "");
+    const [day, setDay] = React.useState(m ? String(Number(m[3])) : "");
+    const [month, setMonth] = React.useState(m ? String(Number(m[2])) : "");
+    const [year, setYear] = React.useState(m ? m[1] : "");
+
+    const iso = parseDate(Number(day), Number(month), Number(year));
+    const preview = iso ? formatPremiumDate(iso) : null;
+    const digits = (v: string, max: number) => v.replace(/\D/g, "").slice(0, max);
+
+    // Keep keystrokes away from Discord's global keybinds (Esc would close settings).
+    const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        if (e.key === "Enter" && iso) onSave(iso);
+        else if (e.key === "Escape") onCancel();
+    };
+
+    return (
+        <div
+            onClick={e => e.stopPropagation()}
+            onKeyDown={onKeyDown}
+            style={{
+                padding: "12px 12px 14px", display: "flex", flexDirection: "column", gap: 10,
+                borderTop: "1px solid var(--background-modifier-accent, #4e5058)",
+                background: "var(--background-secondary, #2b2d31)",
+            }}
+        >
+            <div style={{ fontSize: 13, color: "var(--text-muted, #949ba4)" }}>Enter the date as DD / MM / YYYY.</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <input style={dlgInput} placeholder="DD" inputMode="numeric" maxLength={2} autoFocus value={day} onChange={e => setDay(digits(e.target.value, 2))} />
+                <span>/</span>
+                <input style={dlgInput} placeholder="MM" inputMode="numeric" maxLength={2} value={month} onChange={e => setMonth(digits(e.target.value, 2))} />
+                <span>/</span>
+                <input style={{ ...dlgInput, width: 84 }} placeholder="YYYY" inputMode="numeric" maxLength={4} value={year} onChange={e => setYear(digits(e.target.value, 4))} />
+            </div>
+            <div style={{ minHeight: 20, fontSize: 14, color: preview ? "var(--text-normal, #dbdee1)" : "var(--text-muted, #949ba4)" }}>
+                {preview ? `Subscriber since ${preview}` : (day || month || year) ? "Invalid date (must be a real date, not in the future)" : ""}
+            </div>
+            <div style={{ display: "flex", gap: 8 }}>
+                <button
+                    disabled={!iso}
+                    onClick={() => iso && onSave(iso)}
+                    style={{ ...smallBtn, padding: "6px 14px", fontSize: 13, color: "#fff", background: "var(--brand-500, #5865f2)", opacity: iso ? 1 : 0.5, cursor: iso ? "pointer" : "not-allowed" }}
+                >
+                    Save
+                </button>
+                <button style={{ ...smallBtn, padding: "6px 14px", fontSize: 13 }} onClick={onCancel}>Cancel</button>
+            </div>
+        </div>
+    );
+}
+
 function BadgeSettings() {
     // settings.use() re-renders this component whenever one of the toggles changes
     const store = settings.use([...BADGE_ORDER.map(b => b.key), "premiumSinceDate"]) as Record<string, any>;
-    const [dateDialog, setDateDialog] = React.useState(false);
+    const [editingDate, setEditingDate] = React.useState(false);
     const [collapsed, setCollapsed] = React.useState<Record<string, boolean>>({});
 
     const set = (key: string, value: boolean) => { (settings.store as any)[key] = value; };
@@ -296,12 +369,13 @@ function BadgeSettings() {
                                     {enabled}/{group.badges.length}
                                 </span>
                             </span>
-                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => { if (b.id !== PREMIUM_ID || formatPremiumDate(store.premiumSinceDate)) set(b.key, true); }); }}>All on</button>
-                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => set(b.key, false)); }}>All off</button>
+                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => { if (b.id !== PREMIUM_ID || formatPremiumDate(store.premiumSinceDate)) set(b.key, true); }); refreshProfile(); }}>All on</button>
+                            <button style={smallBtn} onClick={e => { e.stopPropagation(); group.badges.forEach(b => set(b.key, false)); refreshProfile(); }}>All off</button>
                         </div>
 
                         {!isClosed && group.badges.map(b => (
-                            <div key={b.key} style={{
+                            <React.Fragment key={b.key}>
+                            <div style={{
                                 display: "flex", alignItems: "center", gap: 12, padding: "8px 12px",
                                 borderTop: "1px solid var(--background-modifier-accent, #4e5058)",
                             }}>
@@ -313,29 +387,35 @@ function BadgeSettings() {
                                     backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center",
                                 }} />
                                 <span style={{ flex: 1, color: "var(--text-normal, #dbdee1)" }}>{b.id === PREMIUM_ID ? badgeDescription(b) : b.name}</span>
-                                {b.id === PREMIUM_ID && store[b.key] && (
-                                    <button style={smallBtn} onClick={() => setDateDialog(true)}>Edit date</button>
+                                {b.id === PREMIUM_ID && store[b.key] && !editingDate && (
+                                    <button style={smallBtn} onClick={() => setEditingDate(true)}>Edit date</button>
                                 )}
                                 <Toggle on={!!store[b.key]} onChange={v => {
-                                    if (b.id === PREMIUM_ID && v) { setDateDialog(true); return; } // switched on only after a date is saved
+                                    if (b.id === PREMIUM_ID) {
+                                        if (v && !formatPremiumDate(store.premiumSinceDate)) { setEditingDate(true); return; } // needs a date first
+                                        if (!v) setEditingDate(false);
+                                    }
                                     set(b.key, v);
+                                    refreshProfile();
                                 }} />
                             </div>
+                            {b.id === PREMIUM_ID && editingDate && (
+                                <DateEditor
+                                    initial={store.premiumSinceDate}
+                                    onCancel={() => setEditingDate(false)}
+                                    onSave={iso => {
+                                        (settings.store as any).premiumSinceDate = iso;
+                                        (settings.store as any).showPremiumOG = true;
+                                        setEditingDate(false);
+                                        refreshProfile();
+                                    }}
+                                />
+                            )}
+                            </React.Fragment>
                         ))}
                     </div>
                 );
             })}
-            {dateDialog && (
-                <DateDialog
-                    initial={store.premiumSinceDate}
-                    onCancel={() => setDateDialog(false)}
-                    onSave={iso => {
-                        (settings.store as any).premiumSinceDate = iso;
-                        (settings.store as any).showPremiumOG = true;
-                        setDateDialog(false);
-                    }}
-                />
-            )}
         </div>
     );
 }
@@ -372,6 +452,78 @@ const settings = definePluginSettings(settingsDef);
 
 const UserProfileStore = findStoreLazy("UserProfileStore");
 
+// Tell Discord the profile store changed so an open profile re-renders with the
+// new badge/date right away (no need to close and reopen it).
+function refreshProfile() {
+    try { UserProfileStore.emitChange?.(); } catch (e) { console.error("[CustomBadger] refresh failed", e); }
+}
+
+// The REAL "premium since" date of your account, remembered so we can recognise it
+// in Discord's tooltips (see fixPremiumTooltips below).
+let realPremiumSince: Date | null = null;
+
+function toDate(v: any): Date | null {
+    if (v == null) return null;
+    const d = v instanceof Date ? v : new Date(v);
+    return isNaN(d.getTime()) ? null : d;
+}
+
+const TOOLTIP_DATE_STYLES: Intl.DateTimeFormatOptions[] = [
+    { year: "numeric", month: "long", day: "numeric" },
+    { year: "numeric", month: "short", day: "numeric" },
+    { year: "numeric", month: "2-digit", day: "2-digit" },
+    { year: "numeric", month: "numeric", day: "numeric" },
+];
+
+// Replaces the real date with the fake one inside a piece of tooltip text.
+function swapRealDate(text: string): string | null {
+    const iso = (settings.store as any).premiumSinceDate as string;
+    if (!realPremiumSince || !settings.store.showPremiumOG || !formatPremiumDate(iso)) return null;
+    const [y, mo, d] = iso.split("-").map(Number);
+    const fake = new Date(y, mo - 1, d, 12);
+    for (const loc of new Set([navigator.language, "en-US", "en-GB"])) {
+        for (const opt of TOOLTIP_DATE_STYLES) {
+            try {
+                const real = realPremiumSince.toLocaleDateString(loc, opt);
+                const repl = fake.toLocaleDateString(loc, opt);
+                if (real !== repl && text.includes(real)) return text.replace(real, repl);
+            } catch { /* unsupported locale, try next */ }
+        }
+    }
+    return null;
+}
+
+// Fallback for when Discord builds the "Subscriber since ..." tooltip itself from
+// your real subscription date instead of using our badge text. Only tooltips that
+// contain "Subscriber since" AND your real date are touched (English UI only).
+let tooltipObserver: MutationObserver | null = null;
+
+function fixTooltip(n: Node | null) {
+    const el = n && (n.nodeType === 1 ? (n as Element) : n.parentElement);
+    if (!el) return;
+    const tip = el.closest('[class*="tooltip"]') ?? el.querySelector('[class*="tooltip"]');
+    if (!tip || !/subscriber since/i.test(tip.textContent ?? "")) return;
+    const walker = document.createTreeWalker(tip, NodeFilter.SHOW_TEXT);
+    let t: Node | null;
+    while ((t = walker.nextNode())) {
+        const out = swapRealDate(t.nodeValue ?? "");
+        if (out != null) t.nodeValue = out;
+    }
+}
+
+function startTooltipFix() {
+    if (tooltipObserver) return;
+    tooltipObserver = new MutationObserver(muts => {
+        // cheap exit when there is nothing to rewrite
+        if (!realPremiumSince || !settings.store.showPremiumOG || !(settings.store as any).premiumSinceDate) return;
+        for (const m of muts) {
+            if (m.type === "characterData") fixTooltip(m.target);
+            else m.addedNodes.forEach(fixTooltip);
+        }
+    });
+    tooltipObserver.observe(document.body, { childList: true, subtree: true, characterData: true });
+}
+
 let origGetUserProfile: any = null;
 
 // Cache: same Discord profile object + same toggles => SAME returned object.
@@ -405,9 +557,9 @@ function buildBadges(rawExisting: any[]): any[] {
 
 export default definePlugin({
     name: "CustomBadger",
-    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by (Apeture) Nexus Organization",
+    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by NexusResearch",
     authors: [
-        { name: "ApertureNexus", id: 1411992082733863006n },
+        { name: "NexusResearch", id: 1411992082733863006n },
         { name: "Contributor", id: 837022217002680350n },
     ],
     settings,
@@ -427,6 +579,8 @@ export default definePlugin({
                 const currentUser = UserStore.getCurrentUser();
                 if (!profile || typeof profile !== "object" || !currentUser || userId !== currentUser.id) return profile;
 
+                realPremiumSince = toDate(profile.premiumSince) ?? realPremiumSince;
+
                 const sig = toggleSignature();
                 const cached = cache.get(profile);
                 if (cached && cached.sig === sig) return cached.result;
@@ -444,6 +598,19 @@ export default definePlugin({
                     writable: true,
                 });
 
+                // Discord can build the "Subscriber since ..." tooltip from this field
+                // instead of from our badge text, so make it match the chosen date too.
+                // Keeps the original type (string stays string, otherwise Date).
+                const date = formatPremiumDate((settings.store as any).premiumSinceDate);
+                if (date && settings.store.showPremiumOG) {
+                    const [y, mo, d] = ((settings.store as any).premiumSinceDate as string).split("-").map(Number);
+                    const when = new Date(y, mo - 1, d, 12);
+                    Object.defineProperty(result, "premiumSince", {
+                        value: typeof profile.premiumSince === "string" ? when.toISOString() : when,
+                        enumerable: true, configurable: true, writable: true,
+                    });
+                }
+
                 cache.set(profile, { sig, result });
                 return result;
             } catch (e) {
@@ -453,6 +620,7 @@ export default definePlugin({
         };
 
         applySizeCss();
+        startTooltipFix();
     },
 
     stop() {
@@ -462,5 +630,8 @@ export default definePlugin({
             origGetUserProfile = null;
         }
         document.getElementById("vc-custombadges-size")?.remove();
+        tooltipObserver?.disconnect();
+        tooltipObserver = null;
+        realPremiumSince = null;
     },
 });
