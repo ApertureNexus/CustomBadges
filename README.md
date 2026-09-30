@@ -249,7 +249,7 @@ add a new badge hash.
 
 ## Credits
 
-Part of [NexusResearch](https://github.com/ApertureNexus).
+Part of [Aperture Nexus](https://github.com/ApertureNexus).
 
 - **Lead Maintainer:** [NexzaDev](https://github.com/NexzaDev)
 - **Tester:** [ShadowDev7](https://github.com/ShadowDev7)
