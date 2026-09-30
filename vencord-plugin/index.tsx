@@ -6,7 +6,7 @@ import { React, UserStore } from "@webpack/common";
 import type { CSSProperties } from "react";
 
 interface BadgeDef {
-    /** key inside `settings.store` that toggles this badge on/off */
+    /* key inside `settings.store` that toggles this badge on/off */
     key: string;
     id: string;
     name: string;
