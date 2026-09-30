@@ -175,7 +175,7 @@ CustomBadges/
 
 CustomBadges currently ships as a **userplugin** (something you drop into
 `src/userplugins/` yourself). That's the quickest way to use it, but it means
-it's *not* one of Vencord's built-in plugins yet. Here's, briefly, what
+it's *not* one of Vencord's built-in plugins yet (*and most likely will never be*). Here's, briefly, what
 getting it there for real looks like:
 
 1. **Meet Vencord's plugin guidelines.** Official plugins live in
@@ -209,27 +209,36 @@ in short: edit the `BADGE_ORDER` array in `index.tsx`, grab the icon hash from
 
 ## ❓ FAQ
 
-**Will other people see these badges on my profile?**
+1. **Will other people see these badges on my profile?**
+
 No. This only changes what *you* see in *your own* client. It's a local
 render patch, not a real account change.
 
-**Will I see these badges if I open Discord in a browser, or on mobile?**
+2. **Will I see these badges if I open Discord in a browser, or on mobile?**
+
 No — only in the Vencord-patched desktop client where it's installed.
 
-**Does this send any data anywhere?**
+3. **Does this send any data anywhere?**
+
 No. Zero network calls, zero telemetry. Everything is computed locally from
 Vencord's own Badge API.
 
-**Can I get banned for using this?**
+4. **Can I get banned for using this?**
+
 Cosmetic client mods carry the general (low, but non-zero) risk that comes
 with any Discord client modification. Don't post screenshots implying you
 "really" have badges you don't, and don't use it to misrepresent yourself in
 ways that could be considered impersonation or fraud.
 
-**Why don't I see badge X?**
+5. **Why don't I see badge X?**
+
 Check the "Known limitations" section of
 [`vencord-plugin/README.md`](vencord-plugin/README.md) — a handful of badges
 aren't wired up yet even though they exist in `badges_index.js`.
+
+6. **Is this any useful?**
+
+To be honest, I do not really know
 
 ---
 
