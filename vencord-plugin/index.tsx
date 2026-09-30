@@ -51,7 +51,7 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl6", id: "guild_booster_lvl6", name: "Server Boost (12mo)", icon: "991c9f39ee33d7537d9f408c3e53141e" },
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
-    { key: "showBoostLv19", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
+    { key: "showBoostLvl9", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
     // Originally Known As, Quest, Orbs
     { key: "showOriginallyKnownAs", id: "legacy_username", name: "Originally Known As", icon: "6de6d34650760ba5551a79732e98ed60" },
     { key: "showCompletedQuest", id: "quest_completed", name: "Completed a Quest", icon: "7d9ae358c8c5e118768335dbe68b4fb8" },
@@ -363,7 +363,7 @@ function buildBadges(rawExisting: any[]): any[] {
 
 export default definePlugin({
     name: "CustomBadger",
-    description: "Adds choosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by (Aperture) Nexus",
+    description: "Adds chosen badges in your own profile (client-side only), with an on/off switch for each one in the settings tab. Made by (Aperture) Nexus",
                             authors: [
                                 { name: "ApertureNexus", id: 1411992082733863006n },
                                 { name: "Contributor", id: 837022217002680350n },
