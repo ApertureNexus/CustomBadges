@@ -27,11 +27,15 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showNitro24mo", id: "premium_tenure_24_month_v2", name: "Nitro (24mo)", icon: "0d61871f72bb9a33a7ae568c1fb4f20a" },
     { key: "showNitro36mo", id: "premium_tenure_36_month_v2", name: "Nitro (36mo)", icon: "11e2d339068b55d3a506cff34d3780f3" },
     { key: "showNitro60mo", id: "premium_tenure_60_month_v2", name: "Nitro (60mo)", icon: "cd5e2cfd9d7f27a8cdcd3e8a8d5dc9f4" },
+    { key: "showNitro72mo", id: "premium_tenure_72_month_v2", name: "Nitro (72mo+)", icon: "5b154df19c53dce2af92c9b61e6be5e2" },
     // Partner / Moderator / HypeSquad / Bug Hunter
     { key: "showPartner", id: "partner", name: "Partnered Server Owner", icon: "3f9748e53446a137a052f3454e2de41e" },
     { key: "showCertifiedMod", id: "certified_moderator", name: "Moderator Programs Alumni", icon: "fee1624003e2fee35cb398e125dc479b" },
     { key: "showHypesquadBravery", id: "hypesquad_house_1", name: "HypeSquad Bravery", icon: "8a88d63823d8a71cd5e390baa45efa02" },
     { key: "showHypesquadBalance", id: "hypesquad_house_3", name: "HypeSquad Balance", icon: "3aa41de486fa12454c3761e8e223442e" },
+    { key: "showHypesquadBrilliance", id: "hypesquad_house_2", name: "HypeSquad Brilliance", icon: "011940fd013da3f7fb926e4a1cd2e618" },
+    { key: "showHypesquadEvents", id: "hypesquad", name: "HypeSquad Events", icon: "bf01d1073931f921909045f3a39fd264" },
+    { key: "showBugHunterTier2", id: "bug_hunter_level_2", name: "Bug Hunter Tier 2", icon: "848f79194d4be5ff5f81505cbd0ce1e6" },
     { key: "showBugHunterTier1", id: "bug_hunter_level_1", name: "Discord Bug Hunter", icon: "2717692c7dca7289b35297368a940dd0" },
     // Server Boost (lowest -> highest)
     { key: "showBoostLvl1", id: "guild_booster_lvl1", name: "Server Boost (1mo)",  icon: "51040c70d4f20a921ad6674ff86fc95c" },
@@ -42,7 +46,7 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showBoostLvl6", id: "guild_booster_lvl6", name: "Server Boost (12mo)", icon: "991c9f39ee33d7537d9f408c3e53141e" },
     { key: "showBoostLvl7", id: "guild_booster_lvl7", name: "Server Boost (15mo)", icon: "cb3ae83c15e970e8f3d410bc62cb8b99" },
     { key: "showBoostLvl8", id: "guild_booster_lvl8", name: "Server Boost (18mo)", icon: "7142225d31238f6387d9f09efaa02759" },
-    { key: "server-boost-2-years", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
+    { key: "showBoostLv19", id: "guild_boost_lvl24", name: "Server Boost (2 Years)", icon: "ec92202290b48d0879b7413d2dde3bab" },
     // Gifting (lowest -> highest)
     { key: "showPatron",   id: "patron",   name: "Patron",   icon: "ac305d1b9481f312ce4419e7f8296558" },
     { key: "showChampion", id: "champion", name: "Champion", icon: "8b7792c4f65953d3ff564f23429cb79e" },
@@ -55,6 +59,14 @@ const BADGE_ORDER: BadgeDef[] = [
     { key: "showAutomod", id: "automod", name: "Uses AutoMod", icon: "f2459b691ac7453ed6039bbcfaccbfcd" },
     { key: "showBotCommands", id: "bot_commands", name: "Supports Commands", icon: "6f9e37f9029ff57aef81db857890005e" },
     { key: "showPremiumOG", id: "premium", name: "Subscriber since Dec 22, 2016", icon: "2ba85e8026a8614b640c2837bcdfe21b" },
+    { key: "showOrbsApprentice", id: "orb_profile_badge", name: "Orbs Apprentice", icon: "83d8a1eb09a8d64e59233eec5d4d5c2d" },
+    { key: "showCompletedQuest", id: "quest_completed", name: "Completed a Quest", icon: "7d9ae358c8c5e118768335dbe68b4fb8" },
+    // It seems the April fools one does not show up. I commented it out
+    // { key: "showAprilFoolsLootbox", id: "lootbox", name: "April Fools Lootbox", icon: "971cfe4aa5c0582000ea" }, 
+    { key: "showOriginallyKnownAs", id: "legacy_username", name: "Originally Known As", icon: "6de6d34650760ba5551a79732e98ed60" },
+    { key: "showEarlyVerifiedBotDev", id: "verified_developer", name: "Early Verified Bot Developer", icon: "6df5892e0f35b051f8b61eace34f4967" },
+    { key: "showEarlySupporter", id: "early_supporter", name: "Early Supporter", icon: "7060786766c9c840eb3019e725d2b358" },
+    { key: "showAppPremium", id: "application_guild_subscription", name: "App Premium", icon: "d2010c413a8da2208b7e4f35bd8cd4ac" },
     // Account Age
     { key: "showSeed1y",          id: "seed-1y",          name: "Seed (1y)",          icon: "dda73966211a0c16533f8fcd9f1f27c27a628ef562927270e79df9b9c5e6cb12" },
     { key: "showSprout2y",        id: "sprout-2y",        name: "Sprout (2y)",        icon: "74e1884f930b0d69986f92aeea77d3ff3d3d00c540f386b63e6ebb382d5e927d" },
@@ -175,7 +187,7 @@ function applySizeCss() {
 // categories, with the badge icon next to each name.
 
 const CATEGORIES: { title: string; match: (id: string) => boolean }[] = [
-    { title: "Discord & Programs", match: id => ["staff", "partner", "certified_moderator", "bug_hunter_level_1"].includes(id) || id.startsWith("hypesquad_") },
+    { title: "Discord & Programs", match: id => ["staff", "partner", "active_developer", "verified_developer", "certified_moderator", "bug_hunter_level_1", "bug_hunter_level_2"].includes(id) || id.startsWith("hypesquad_") },
     { title: "Developer & Bots", match: id => ["active_developer", "automod", "bot_commands"].includes(id) },
     { title: "Nitro", match: id => id === "premium" || id.startsWith("premium_tenure") },
     { title: "Server Boost", match: id => id.startsWith("guild_boost") },
@@ -328,8 +340,7 @@ function buildBadges(rawExisting: any[]): any[] {
     const existing = rawExisting.filter(x => x && KEEP_REAL_IDS.has(x.id));
 
     for (const b of BADGE_ORDER) {
-        // Vencord's Badge API renders these via iconSrc so their SVG URLs are
-        // used directly instead of Discord treating the hash as a PNG badge.
+        // Vencord's Badge API renders these via iconSrc so their SVG URLs are used directly instead of Discord treating the hash as a PNG badge.
         if (SVG_BADGE_IDS.has(b.id)) continue;
         if (!settings.store[b.key]) continue; // toggled off
         const already = existing.some(x => x.id === b.id || iconKey(x.icon) === iconKey(b.icon));
@@ -360,8 +371,8 @@ export default definePlugin({
         UserProfileStore.getUserProfile = function (this: any, ...args: any[]) {
             const profile = origGetUserProfile.apply(this, args);
 
-            // A plugin must NEVER be able to take Discord down: on any error
-            // fall back to Discord's untouched profile.
+            // A plugin must NEVER be able to take Discord down: 
+            // On any error fall back to Discord's untouched profile.
             try {
                 const userId = args[0];
                 const currentUser = UserStore.getCurrentUser();
@@ -371,8 +382,8 @@ export default definePlugin({
                 const cached = cache.get(profile);
                 if (cached && cached.sig === sig) return cached.result;
 
-                // Copy of the profile (same prototype, same props). We do NOT
-                // mutate Discord's own store object anymore.
+                // Copy of the profile (same prototype, same props). 
+                // We do NOT mutate Discord's own store object anymore.
                 const result = Object.create(
                     Object.getPrototypeOf(profile),
                     Object.getOwnPropertyDescriptors(profile)
