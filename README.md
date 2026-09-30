@@ -54,9 +54,6 @@ profile, in *your own* client.
   name, so you always know what you're enabling.
 - **Adjustable badge size** — one setting to resize every badge icon in
   Discord's UI.
-- **Editable "Subscriber since" date** — set your own Nitro subscription date
-  and it renders as a proper long-form date (`28/08/2012` → *Subscriber since
-  August 28, 2012*).
 - **Accurate ordering** — badges follow Discord's real display order as
   closely as documented (Staff → Nitro → Partner/Mod → HypeSquad → Boost →
   Gifting → ... ), with tiered badges always running from lowest to highest.
@@ -167,33 +164,6 @@ CustomBadges/
 ├── LICENSE
 └── README.md                  # you are here
 ```
-
----
-
-## 🚀 Publishing to Vencord officially
-
-CustomBadges currently ships as a **userplugin** (something you drop into
-`src/userplugins/` yourself). That's the quickest way to use it, but it means
-it's *not* one of Vencord's built-in plugins yet (*and most likely will never be*). Here's, briefly, what
-getting it there for real looks like:
-
-1. **Meet Vencord's plugin guidelines.** Official plugins live in
-   `src/plugins/` (not `userplugins/`) inside the main Vencord repo, and need
-   an `index.ts(x)` plus a short plugin description, following the coding
-   conventions documented in Vencord's own contributing docs.
-2. **Fork [Vendicated/Vencord](https://github.com/Vendicated/Vencord)** and
-   add the plugin folder under `src/plugins/customBadges/`.
-3. **Follow the review checklist**: no unnecessary patches, no telemetry, a
-   clear `description` and `authors` field in the `definePlugin()` call, and
-   settings defined through `definePluginSettings` (already done here).
-4. **Open a Pull Request** against the main repo. A Vencord maintainer will
-   review the code, may request changes (naming, patch scope, settings UX),
-   and merge it once it meets their bar.
-5. Once merged, it ships with **every** Vencord install — no manual source
-   build needed anymore.
-
-Until (and unless) that happens, the userplugin install method above is the
-only way to run it.
 
 ---
 
