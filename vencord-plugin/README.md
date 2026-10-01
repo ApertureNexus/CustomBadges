@@ -38,9 +38,6 @@ up under **Vencord → Plugins** with its own settings tab.
   - Click a category title to collapse/expand it; the `3/10` counter shows how
     many badges in it are enabled.
   - **All on / All off** switches every badge in that category at once.
-  - **Subscriber since** — when you switch it on, a popup asks for the date as
-    `DD / MM / YYYY`. The badge then shows the month as a name, e.g. `28/08/2012`
-    becomes `Subscriber since August 28, 2012`. Use **Edit date** to change it.
     The badge stays hidden until a valid date is saved.
 - Changes are applied the next time your profile is rendered — close and reopen
   your profile/popout if you don't see the change immediately.
