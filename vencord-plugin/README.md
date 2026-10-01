@@ -1,7 +1,7 @@
 # CustomBadges — Vencord userplugin
 
-This is no longer a browser extension (well it used to): it is a real Vencord plugin, so it shows
-up under **Vencord → Plugins** with its own settings tab.
+A real Vencord plugin: it shows up under **Vencord → Plugins** as
+**CustomBadger**, with its own settings tab.
 
 ## Installation (requires a source build of Vencord — not the official installer)
 
@@ -23,7 +23,7 @@ up under **Vencord → Plugins** with its own settings tab.
    ```
    (Windows: run `pnpm inject`, then pick your Discord client when asked.)
 5. Fully restart Discord (Ctrl+R is not enough — close it completely, also from the tray, and reopen).
-6. Discord Settings → Vencord → Plugins → **CustomBadges** → enable it,
+6. Discord Settings → Vencord → Plugins → **CustomBadger** → enable it,
    then click the gear icon to open the badge settings.
 
 ## The settings tab
@@ -31,28 +31,34 @@ up under **Vencord → Plugins** with its own settings tab.
 - **Badge Size** — number field, size of the badge icons in px.
   `0` = don't override Discord's own size. Note: the size rule applies to badge
   icons everywhere in Discord, not only on your own profile.
-- **Badge list** — badges are grouped into categories: Nitro, Staff &
-  Programs, HypeSquad, Server Boost, Gifting, Quests & Misc, Bots, Account Age,
-  Streaming, Game Time, Game Variety.
+- **Badge list** — 13 categories, in this order: Staff & Programs, Nitro,
+  Community & Ownership, HypeSquad, Server Boost, Gifting, Legacy / Historical,
+  Activity & Engagement, Bot / App Features, Account Age, Streaming, Game Time,
+  Game Variety.
   - Every badge shows its icon next to its name, with its own on/off switch.
   - Click a category title to collapse/expand it; the `3/10` counter shows how
     many badges in it are enabled.
   - **All on / All off** switches every badge in that category at once.
-    The badge stays hidden until a valid date is saved.
+- All switches start **on** by default.
 - Changes are applied the next time your profile is rendered — close and reopen
   your profile/popout if you don't see the change immediately.
+
+## What happens to your real badges
+
+While the plugin is enabled, your **real** Discord badges are not shown — only
+the badges switched on here. Vencord's own badges (contributor, donor, ...) are
+not affected.
 
 ## Badge order on your profile
 
 Regular badges follow the order of the `BADGE_ORDER` list in `index.tsx`, which
 follows Discord's real display order as far as it is known: Discord Staff,
-Nitro (Discord Nitro, Subscriber since, then Bronze to Opal), Partnered Server
-Owner, Moderator Programs Alumni, HypeSquad Events, HypeSquad houses, Bug
-Hunter Tier 1 and 2, Early Verified Bot Developer, Early Supporter, Server
-Boost, Originally Known As, Completed a Quest, Orbs Apprentice, Gifting. Tier
-badges always go from the lowest to the highest tier. Active Developer, Uses
-AutoMod, Supports Commands and App Premium come after those, because their real
-position is not known yet.
+Nitro (Bronze to Opal), Partnered Server Owner, Moderator Programs Alumni,
+HypeSquad Events, HypeSquad houses, Bug Hunter Tier 1 and 2, Early Verified Bot
+Developer, Early Supporter, Server Boost, Originally Known As, Completed a
+Quest, Orbs Apprentice, Gifting. Tier badges always go from the lowest to the
+highest tier. Active Developer, Uses AutoMod, Supports Commands and App Premium
+come after those, because their real position is not known yet.
 
 **Exception:** the SVG-based badges (Discord Nitro Basic, Account Age, Streaming,
 Game Time, Game Variety) are added through Vencord's Badge API and are always
@@ -82,8 +88,12 @@ The settings tab updates automatically. Afterwards rebuild and inject again:
 
 ## Known limitations
 
-- The april fools badge could not be added 
+- Not in the plugin: **April Fools Lootbox** (it does not show up, so it is
+  commented out in `BADGE_ORDER`), the generic **Discord Nitro** badge (its icon
+  lives on a different path than the other badges; Discord Nitro Basic is
+  included instead) and **Subscriber since**.
 - If a badge icon shows up empty, its hash in `BADGE_ORDER` is wrong.
+- Switches take effect the next time the profile is rendered.
 
 ## IMPORTANT
 

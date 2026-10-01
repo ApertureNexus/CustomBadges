@@ -16,7 +16,6 @@
   <a href="#-settings-tab">Settings Tab</a> ·
   <a href="#-badge-categories">Categories</a> ·
   <a href="#-project-structure">Structure</a> ·
-  <a href="#-publishing-to-vencord-officially">Publishing to Vencord</a> ·
   <a href="#-contributing">Contributing</a> ·
   <a href="#-faq">FAQ</a>
 </p>
@@ -131,8 +130,8 @@ Badges are grouped into 13 categories in the settings tab, in this order:
 
 1. **Staff & Programs** — Discord Staff, Moderator Programs Alumni, Early
    Verified Bot Developer, Bug Hunter (Tier 1 & 2)
-2. **Nitro** — the generic Nitro badge, Subscriber-since, and every tenure
-   tier from 1 month to Opal
+2. **Nitro** — Discord Nitro Basic and every tenure tier from 1 month to
+   Opal
 3. **Community & Ownership** — Partnered Server Owner
 4. **HypeSquad** — Events + the three houses (Bravery, Brilliance, Balance)
 5. **Server Boost** — every boost tenure level
@@ -201,14 +200,18 @@ ways that could be considered impersonation or fraud.
 5. **Why don't I see badge X?**
 
 Check the "Known limitations" section of
-[`vencord-plugin/README.md`](vencord-plugin/README.md) — a handful of badges
-aren't wired up yet even though they exist in `badges_index.js`.
+[`vencord-plugin/README.md`](vencord-plugin/README.md) — a couple of badges
+(April Fools Lootbox, the generic Discord Nitro badge, Subscriber since) aren't wired up.
 
-6. **Is this any useful?**
+6. **What happens to my real badges while the plugin is on?**
+
+They are hidden: only the badges switched on in the plugin are shown.
+
+7. **Is this any useful?**
 
 To be honest, I do not really know
 
-7. **Why does this exist?**
+8. **Why does this exist?**
 
 As Cave Johnson said, *becuase why not?*
 
