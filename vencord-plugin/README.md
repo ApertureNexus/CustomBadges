@@ -82,10 +82,7 @@ The settings tab updates automatically. Afterwards rebuild and inject again:
 
 ## Known limitations
 
-- Not (yet) in the plugin: Orbs Apprentice, Completed a Quest, Originally Known
-  As, HypeSquad Events, HypeSquad Brilliance, Early Verified Bot Developer,
-  Early Supporter, Bug Hunter Tier 2, Discord Nitro, April Fools Lootbox,
-  App Premium and Nitro Opal (72mo+). They exist in `badges_index.js`.
+- The april fools badge could not be added 
 - If a badge icon shows up empty, its hash in `BADGE_ORDER` is wrong.
 
 ## IMPORTANT
